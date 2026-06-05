@@ -838,6 +838,10 @@ function ProjectsPage({ projects, setProjects }) {
   const [confirm, setConfirm] = React.useState(null);
   const [searchFoc, setSearchFoc] = React.useState(false);
   const [apiErr, setApiErr]   = React.useState('');
+  // priority is UI-only (not in backend model) — stored by project _id
+  const [priorities, setPriorities] = React.useState({});
+
+  const getProjectPriority = id => priorities[id] || 'medium';
 
   const filtered = React.useMemo(() =>
     projects
@@ -851,11 +855,15 @@ function ProjectsPage({ projects, setProjects }) {
   const handleSave = async data => {
     try {
       if (modal.mode === 'new') {
-        const created = await api('POST', '/projects', { name: data.name, description: data.description });
-        setProjects(prev => [toProjectShape(created), ...prev]);
+        const created = await api('POST', '/projects', { name: data.name, description: data.description, status: data.status });
+        const shaped = toProjectShape(created);
+        setProjects(prev => [shaped, ...prev]);
+        if (data.priority) setPriorities(prev => ({ ...prev, [shaped._id]: data.priority }));
       } else {
-        const updated = await api('PUT', `/projects/${modal.project._id}`, { name: data.name, description: data.description });
-        setProjects(prev => prev.map(p => p._id === modal.project._id ? toProjectShape(updated) : p));
+        const updated = await api('PUT', `/projects/${modal.project._id}`, { name: data.name, description: data.description, status: data.status });
+        const shaped = toProjectShape(updated);
+        setProjects(prev => prev.map(p => p._id === modal.project._id ? shaped : p));
+        if (data.priority) setPriorities(prev => ({ ...prev, [modal.project._id]: data.priority }));
       }
       setModal(null);
     } catch (e) {
@@ -906,8 +914,8 @@ function ProjectsPage({ projects, setProjects }) {
       ) : (
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: 14 }}>
           {filtered.map(proj => (
-            <ProjectCard key={proj.id} project={proj}
-              onEdit={() => setModal({ mode: 'edit', project: proj })}
+            <ProjectCard key={proj.id} project={{ ...proj, priority: getProjectPriority(proj._id) }}
+              onEdit={() => setModal({ mode: 'edit', project: { ...proj, priority: getProjectPriority(proj._id) } })}
               onDelete={() => setConfirm(proj._id || proj.id)} />
           ))}
         </div>

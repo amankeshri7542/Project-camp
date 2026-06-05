@@ -11,6 +11,11 @@ const projectSchema = new Schema(
         description: {
             type: String,
         },
+        status: {
+            type: String,
+            enum: ['todo', 'in_progress', 'done'],
+            default: 'todo',
+        },
         createdBy: {
             type: Schema.Types.ObjectId,
             ref: "User",
