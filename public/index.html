@@ -681,18 +681,12 @@ function LandingPage({ navigate }) {
           <Btn variant="ghost"   size="lg" onClick={()=>navigate('login')}>Sign in</Btn>
         </div>
         <div style={{ marginTop:18, animation:'fadeSlideUp 0.5s ease 0.35s both' }}>
-          <button onClick={()=>navigate('dashboard')} style={{ background:'none', border:'none', cursor:'pointer', color:'rgba(248,248,255,0.4)', fontSize:13, fontFamily:'DM Sans,sans-serif', display:'inline-flex', alignItems:'center', gap:5, transition:'color 0.15s', padding:0 }}
-            onMouseEnter={e=>e.currentTarget.style.color='rgba(248,248,255,0.7)'} onMouseLeave={e=>e.currentTarget.style.color='rgba(248,248,255,0.4)'}>
+          <button onClick={()=>navigate('dashboard')}
+            style={{ background:'rgba(255,255,255,0.06)', border:'1px solid rgba(255,255,255,0.18)', borderRadius:8, cursor:'pointer', color:'rgba(248,248,255,0.75)', fontSize:13, fontFamily:'DM Sans,sans-serif', display:'inline-flex', alignItems:'center', gap:6, transition:'all 0.18s', padding:'8px 18px', backdropFilter:'blur(10px)', WebkitBackdropFilter:'blur(10px)' }}
+            onMouseEnter={e=>{e.currentTarget.style.background='rgba(255,255,255,0.11)';e.currentTarget.style.color='#F8F8FF';e.currentTarget.style.borderColor='rgba(255,255,255,0.32)';}}
+            onMouseLeave={e=>{e.currentTarget.style.background='rgba(255,255,255,0.06)';e.currentTarget.style.color='rgba(248,248,255,0.75)';e.currentTarget.style.borderColor='rgba(255,255,255,0.18)';}}>
             Browse as guest <Icon name="arrowUR" size={12} color="currentColor" />
           </button>
-        </div>
-        <div style={{ marginTop:56, display:'flex', alignItems:'center', gap:14, color:c.textSecondary, fontSize:13, animation:'fadeSlideUp 0.5s ease 0.4s both', flexWrap:'wrap', justifyContent:'center' }}>
-          <div style={{ display:'flex' }}>
-            {AVATARS.map((av,i)=>(
-              <div key={i} style={{ width:30, height:30, borderRadius:'50%', background:`${av.col}33`, border:`2px solid ${av.col}55`, display:'flex', alignItems:'center', justifyContent:'center', fontSize:10, fontWeight:700, color:av.col, marginLeft:i>0?-11:0, position:'relative', zIndex:4-i }}>{av.init}</div>
-            ))}
-          </div>
-          <span>Trusted by <strong style={{ color:c.textPrimary }}>500+</strong> engineers</span>
         </div>
       </section>
 
@@ -958,11 +952,12 @@ function DashboardPage({ projects, navigate, user }) {
   const stats = React.useMemo(()=>({ total:projects.length, inProgress:projects.filter(p=>p.status==='in_progress').length, completed:projects.filter(p=>p.status==='done').length, todo:projects.filter(p=>p.status==='todo').length }), [projects]);
   const recent = React.useMemo(()=>projects.slice(0,5), [projects]);
   const greeting = (() => { const h=new Date().getHours(); return h<12?'Good morning':h<18?'Good afternoon':'Good evening'; })();
+  const firstName = user?.name?.split(' ')[0] || 'Guest';
 
   return (
     <div style={{ padding:mobile?'20px 16px 90px':'36px', maxWidth:1160, margin:'0 auto' }}>
       <div style={{ marginBottom:28 }}>
-        <h1 style={{ fontSize:mobile?22:26, fontWeight:600, color:c.textPrimary, letterSpacing:'-0.025em', marginBottom:5 }}>{greeting}, {user.name.split(' ')[0]} 👋</h1>
+        <h1 style={{ fontSize:mobile?22:26, fontWeight:600, color:c.textPrimary, letterSpacing:'-0.025em', marginBottom:5 }}>{greeting}, {firstName} 👋</h1>
         <p style={{ fontSize:13, color:c.textSecondary }}>{stats.inProgress} active · {stats.todo} todo · {stats.completed} completed</p>
       </div>
 
