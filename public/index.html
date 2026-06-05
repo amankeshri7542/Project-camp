@@ -6,68 +6,104 @@
   <title>Project Camp</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;600&family=DM+Sans:wght@400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
   <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" crossorigin="anonymous"></script>
   <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" crossorigin="anonymous"></script>
   <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" crossorigin="anonymous"></script>
 </head>
 <body>
 <div id="root"></div>
-
 <script type="text/babel">
 
-/* ── DESIGN TOKENS ── */
+/* ─────────────────────────────────────────
+   DESIGN TOKENS & GLASS SYSTEM
+───────────────────────────────────────── */
 const C = {
-  bg:            '#0A0A0F',
-  surface:       '#111118',
-  surface2:      '#1A1A24',
-  border:        '#2A2A3A',
-  borderHover:   '#3A3A4A',
-  accent:        '#6366F1',
-  accentHover:   '#7577F3',
-  accentGlow:    'rgba(99,102,241,0.15)',
-  textPrimary:   '#F0F0FF',
-  textSecondary: '#8B8BA7',
-  success:       '#22C55E',
-  warning:       '#F59E0B',
-  danger:        '#EF4444',
-  dangerHover:   '#F56565',
+  bg:            '#0D0D1A',
+  surfaceSolid:  '#161428',
+  border:        'rgba(255,255,255,0.12)',
+  borderHover:   'rgba(255,255,255,0.24)',
+  accent:        '#60A5FA',
+  accentHover:   '#93C5FD',
+  accentGlow:    'rgba(96,165,250,0.15)',
+  textPrimary:   '#F8F8FF',
+  textSecondary: 'rgba(248,248,255,0.55)',
+  success:       '#A8FF78',
+  warning:       '#FFD166',
+  danger:        '#FF6B6B',
+  dangerHover:   '#FF9090',
+};
+
+const GLASS = {
+  deep: {
+    backdropFilter: 'blur(64px) saturate(2.2)',
+    WebkitBackdropFilter: 'blur(64px) saturate(2.2)',
+    background: 'linear-gradient(160deg, rgba(255,255,255,0.16) 0%, rgba(255,255,255,0.07) 100%)',
+    border: '1px solid rgba(255,255,255,0.28)',
+    boxShadow: '0 8px 48px rgba(0,0,0,0.55), inset 0 1.5px 0 rgba(255,255,255,0.5), inset 0 -1px 0 rgba(0,0,0,0.15)',
+  },
+  surface: {
+    backdropFilter: 'blur(40px) saturate(1.9)',
+    WebkitBackdropFilter: 'blur(40px) saturate(1.9)',
+    background: 'linear-gradient(160deg, rgba(255,255,255,0.12) 0%, rgba(255,255,255,0.05) 100%)',
+    border: '1px solid rgba(255,255,255,0.20)',
+    boxShadow: '0 4px 28px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.38)',
+  },
+  lifted: {
+    backdropFilter: 'blur(20px) saturate(2.4)',
+    WebkitBackdropFilter: 'blur(20px) saturate(2.4)',
+    background: 'linear-gradient(160deg, rgba(255,255,255,0.22) 0%, rgba(255,255,255,0.10) 100%)',
+    border: '1px solid rgba(255,255,255,0.40)',
+    boxShadow: '0 2px 16px rgba(0,0,0,0.3), inset 0 1.5px 0 rgba(255,255,255,0.6)',
+  },
 };
 
 const ThemeContext = React.createContext(C);
 const useC = () => React.useContext(ThemeContext);
 
-/* ── GLOBAL CSS ── */
+/* ─────────────────────────────────────────
+   GLOBAL CSS
+───────────────────────────────────────── */
 (() => {
   const s = document.createElement('style');
   s.textContent = `
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     html, body, #root { height: 100%; }
-    body {
-      font-family: 'Inter', sans-serif;
-      background: #0A0A0F;
-      color: #F0F0FF;
-      font-size: 14px;
-      line-height: 1.5;
-      -webkit-font-smoothing: antialiased;
-    }
-    input, textarea, select, button { font-family: inherit; }
-    ::-webkit-scrollbar { width: 5px; height: 5px; }
+    body { font-family: 'DM Sans', sans-serif; background: #0D0D1A; color: #F8F8FF; font-size: 14px; line-height: 1.5; -webkit-font-smoothing: antialiased; }
+    h1,h2,h3,h4,h5 { font-family: 'Sora', sans-serif; }
+    input, textarea, select, button { font-family: 'DM Sans', sans-serif; }
+    ::-webkit-scrollbar { width: 4px; height: 4px; }
     ::-webkit-scrollbar-track { background: transparent; }
-    ::-webkit-scrollbar-thumb { background: #2A2A3A; border-radius: 10px; }
-    ::-webkit-scrollbar-thumb:hover { background: #3A3A4A; }
-    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-    @keyframes fadeSlideUp {
-      from { opacity: 0; transform: translateY(14px) scale(0.98); }
-      to   { opacity: 1; transform: translateY(0)    scale(1);    }
+    ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.12); border-radius: 10px; }
+    ::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.22); }
+
+    @keyframes fadeIn       { from{opacity:0} to{opacity:1} }
+    @keyframes fadeSlideUp  { from{opacity:0;transform:translateY(14px)} to{opacity:1;transform:translateY(0)} }
+    @keyframes spin         { from{transform:rotate(0)} to{transform:rotate(360deg)} }
+    @keyframes pulse        { 0%,100%{opacity:1} 50%{opacity:0.35} }
+    @keyframes orbDrift1    { from{transform:translate(0,0) scale(1)} to{transform:translate(4%,7%) scale(1.08)} }
+    @keyframes orbDrift2    { from{transform:translate(0,0) scale(1.05)} to{transform:translate(-5%,-4%) scale(0.95)} }
+    @keyframes orbDrift3    { from{transform:translate(0,0)} to{transform:translate(-55px,38px)} }
+    @keyframes orbDrift4    { from{transform:translate(0,0)} to{transform:translate(45px,-55px)} }
+    @keyframes drawerIn     { from{transform:translateX(-100%)} to{transform:translateX(0)} }
+    @keyframes mobileNavIn  { from{transform:translateY(100%);opacity:0} to{transform:translateY(0);opacity:1} }
+    @keyframes cardReveal   { from{opacity:0;transform:translateY(18px)} to{opacity:1;transform:translateY(0)} }
+
+    /* Mobile-specific overrides */
+    @media (max-width: 767px) {
+      .desktop-only { display: none !important; }
+      .mobile-content { padding: 20px 16px 90px !important; }
     }
-    @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-    @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.4; } }
+    @media (min-width: 768px) {
+      .mobile-only { display: none !important; }
+    }
   `;
   document.head.appendChild(s);
 })();
 
-/* ── API HELPER ── */
+/* ─────────────────────────────────────────
+   API HELPERS
+───────────────────────────────────────── */
 const api = async (method, path, body) => {
   const opts = { method, credentials: 'include', headers: {} };
   if (body) { opts.headers['Content-Type'] = 'application/json'; opts.body = JSON.stringify(body); }
@@ -78,60 +114,89 @@ const api = async (method, path, body) => {
 };
 
 const toUserShape = u => u ? ({
-  _id: u._id,
-  name: u.fullName || u.username || 'User',
-  email: u.email || '',
-  bio: u.bio || '',
-  username: u.username || '',
-  initials: (u.fullName || u.username || 'U').trim().split(/\s+/).map(w => w[0].toUpperCase()).slice(0, 2).join(''),
-  joinedAt: u.createdAt ? new Date(u.createdAt).toLocaleDateString('en-US', { month: 'long', year: 'numeric' }) : '',
+  _id: u._id, name: u.fullName || u.username || 'User', email: u.email || '',
+  bio: u.bio || '', username: u.username || '',
+  initials: (u.fullName || u.username || 'U').trim().split(/\s+/).map(w => w[0].toUpperCase()).slice(0,2).join(''),
+  joinedAt: u.createdAt ? new Date(u.createdAt).toLocaleDateString('en-US',{month:'long',year:'numeric'}) : '',
 }) : null;
 
 const toProjectShape = p => p ? ({
-  id: p._id,
-  _id: p._id,
-  name: p.name,
-  description: p.description || '',
-  status: p.status || 'todo',
-  priority: 'medium',
-  updatedAt: p.updatedAt ? new Date(p.updatedAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) : '',
-  tasks: 0,
-  completed: 0,
+  id: p._id, _id: p._id, name: p.name, description: p.description || '',
+  status: p.status || 'todo', priority: 'medium',
+  updatedAt: p.updatedAt ? new Date(p.updatedAt).toLocaleDateString('en-US',{month:'short',day:'numeric'}) : '',
+  tasks: 0, completed: 0,
 }) : null;
 
+/* ─────────────────────────────────────────
+   HOOKS
+───────────────────────────────────────── */
+const useMobile = () => {
+  const [mobile, setMobile] = React.useState(window.innerWidth < 768);
+  React.useEffect(() => {
+    const fn = () => setMobile(window.innerWidth < 768);
+    window.addEventListener('resize', fn);
+    return () => window.removeEventListener('resize', fn);
+  }, []);
+  return mobile;
+};
+
+/* ─────────────────────────────────────────
+   STATUS / PRIORITY CONFIG
+───────────────────────────────────────── */
 const STATUS_CFG = {
-  todo:        { label: 'Todo',        bg: '#1E1E2E', color: '#8B8BA7' },
-  in_progress: { label: 'In Progress', bg: '#1C1B3A', color: '#6366F1' },
-  done:        { label: 'Done',        bg: '#0F2A1A', color: '#22C55E' },
+  todo:        { label:'Todo',        bg:'rgba(248,248,255,0.06)', color:'rgba(248,248,255,0.5)',  border:'rgba(248,248,255,0.14)' },
+  in_progress: { label:'In Progress', bg:'rgba(96,165,250,0.1)',   color:'#60A5FA',                border:'rgba(96,165,250,0.32)'  },
+  done:        { label:'Done',        bg:'rgba(168,255,120,0.1)',  color:'#A8FF78',                border:'rgba(168,255,120,0.28)' },
 };
-
 const PRIORITY_CFG = {
-  low:    { label: 'Low',    bg: '#14532D', color: '#22C55E' },
-  medium: { label: 'Medium', bg: '#78350F', color: '#F59E0B' },
-  high:   { label: 'High',   bg: '#7F1D1D', color: '#EF4444' },
+  low:    { label:'Low',    bg:'rgba(168,255,120,0.08)', color:'#A8FF78', border:'rgba(168,255,120,0.22)' },
+  medium: { label:'Medium', bg:'rgba(255,209,102,0.1)',  color:'#FFD166', border:'rgba(255,209,102,0.28)' },
+  high:   { label:'High',   bg:'rgba(255,107,107,0.1)',  color:'#FF6B6B', border:'rgba(255,107,107,0.28)' },
 };
 
-/* ── LOGO ── */
-function Logo({ size = 'md' }) {
-  const c = useC();
-  const sz = size === 'sm' ? 20 : size === 'lg' ? 32 : 26;
-  const ts = size === 'sm' ? 13 : size === 'lg' ? 20 : 15;
+/* ─────────────────────────────────────────
+   ANIMATED AURORA BACKGROUND
+───────────────────────────────────────── */
+function GlassBg() {
   return (
-    <div style={{ display: 'flex', alignItems: 'center', gap: 8, userSelect: 'none', flexShrink: 0 }}>
+    <div style={{ position:'fixed', inset:0, zIndex:0, overflow:'hidden', pointerEvents:'none' }}>
+      <div style={{ position:'absolute', inset:0, background:'#0D0D1A' }} />
+      <div style={{ position:'absolute', width:'90%', height:'90%', top:'-30%', left:'-20%', background:'radial-gradient(ellipse, rgba(110,55,220,0.65) 0%, rgba(70,25,150,0.3) 40%, transparent 65%)', animation:'orbDrift1 26s ease infinite alternate' }} />
+      <div style={{ position:'absolute', width:'75%', height:'80%', bottom:'-20%', right:'-15%', background:'radial-gradient(ellipse, rgba(150,60,230,0.55) 0%, rgba(100,35,180,0.2) 40%, transparent 65%)', animation:'orbDrift2 32s ease infinite alternate' }} />
+      <div style={{ position:'absolute', width:720, height:720, borderRadius:'50%', top:'-15%', right:'5%', background:'radial-gradient(circle, rgba(255,70,130,0.38) 0%, rgba(220,50,100,0.12) 45%, transparent 68%)', animation:'orbDrift3 22s ease infinite alternate' }} />
+      <div style={{ position:'absolute', width:580, height:580, borderRadius:'50%', bottom:'3%', left:'3%', background:'radial-gradient(circle, rgba(0,180,255,0.32) 0%, rgba(0,140,230,0.10) 45%, transparent 68%)', animation:'orbDrift4 38s ease infinite alternate' }} />
+      <div style={{ position:'absolute', width:420, height:420, borderRadius:'50%', top:'40%', left:'42%', transform:'translate(-50%,-50%)', background:'radial-gradient(circle, rgba(180,90,255,0.18) 0%, transparent 65%)' }} />
+      <div style={{ position:'absolute', inset:0, backgroundImage:'radial-gradient(circle, rgba(255,255,255,0.045) 1px, transparent 1px)', backgroundSize:'30px 30px' }} />
+    </div>
+  );
+}
+
+/* ─────────────────────────────────────────
+   LOGO
+───────────────────────────────────────── */
+function Logo({ size='md' }) {
+  const sz = size==='sm'?20:size==='lg'?32:26;
+  const ts = size==='sm'?13:size==='lg'?20:15;
+  const id = `lg${sz}`;
+  return (
+    <div style={{ display:'flex', alignItems:'center', gap:8, userSelect:'none', flexShrink:0 }}>
       <svg width={sz} height={sz} viewBox="0 0 24 24" fill="none">
-        <path d="M12 2L2 21h20L12 2z" fill={c.accent} />
+        <defs><linearGradient id={id} x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stopColor="#60A5FA"/><stop offset="100%" stopColor="#A78BFA"/></linearGradient></defs>
+        <path d="M12 2L2 21h20L12 2z" fill={`url(#${id})`} />
         <path d="M12 9v7M9.5 14.5h5" stroke="white" strokeWidth="1.6" strokeLinecap="round" />
       </svg>
-      <span style={{ fontSize: ts, fontWeight: 600, color: c.textPrimary, letterSpacing: '-0.025em' }}>
-        Project<span style={{ color: c.accent }}>Camp</span>
+      <span style={{ fontSize:ts, fontWeight:600, color:'#F8F8FF', letterSpacing:'-0.025em', fontFamily:'Sora,sans-serif' }}>
+        Project<span style={{ color:'#60A5FA' }}>Camp</span>
       </span>
     </div>
   );
 }
 
-/* ── ICON ── */
-function Icon({ name, size = 16, color = 'currentColor', strokeWidth = 1.5 }) {
-  const p = { width: size, height: size, viewBox: '0 0 24 24', fill: 'none', stroke: color, strokeWidth, strokeLinecap: 'round', strokeLinejoin: 'round', style: { display: 'block', flexShrink: 0 } };
+/* ─────────────────────────────────────────
+   ICON
+───────────────────────────────────────── */
+function Icon({ name, size=16, color='currentColor', strokeWidth=1.5 }) {
+  const p = { width:size, height:size, viewBox:'0 0 24 24', fill:'none', stroke:color, strokeWidth, strokeLinecap:'round', strokeLinejoin:'round', style:{display:'block',flexShrink:0} };
   const paths = {
     folder:    <path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z"/>,
     activity:  <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>,
@@ -152,178 +217,180 @@ function Icon({ name, size = 16, color = 'currentColor', strokeWidth = 1.5 }) {
     menu:      <><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></>,
     arrowUR:   <><path d="M7 17L17 7"/><path d="M7 7h10v10"/></>,
     users:     <><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></>,
-    zap:       <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>,
     mail:      <><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></>,
     lock:      <><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></>,
-    eye:       <><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></>,
-    target:    <><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></>,
     hash:      <><line x1="4" y1="9" x2="20" y2="9"/><line x1="4" y1="15" x2="20" y2="15"/><line x1="10" y1="3" x2="8" y2="21"/><line x1="16" y1="3" x2="14" y2="21"/></>,
   };
   return <svg {...p}>{paths[name]}</svg>;
 }
 
-/* ── BADGES ── */
+/* ─────────────────────────────────────────
+   BADGES
+───────────────────────────────────────── */
 function StatusBadge({ status }) {
   const cfg = STATUS_CFG[status] || STATUS_CFG.todo;
-  return (
-    <span style={{ background: cfg.bg, color: cfg.color, borderRadius: 20, fontSize: 11, padding: '3px 10px', fontWeight: 500, whiteSpace: 'nowrap', display: 'inline-block', letterSpacing: '0.01em' }}>
-      {cfg.label}
-    </span>
-  );
+  return <span style={{ background:cfg.bg, color:cfg.color, border:`1px solid ${cfg.border}`, borderRadius:20, fontSize:11, padding:'3px 10px', fontWeight:500, whiteSpace:'nowrap', display:'inline-block', backdropFilter:'blur(8px)', WebkitBackdropFilter:'blur(8px)' }}>{cfg.label}</span>;
 }
-
 function PriorityBadge({ priority }) {
   const cfg = PRIORITY_CFG[priority] || PRIORITY_CFG.low;
-  return (
-    <span style={{ background: cfg.bg, color: cfg.color, borderRadius: 20, fontSize: 11, padding: '3px 10px', fontWeight: 500, whiteSpace: 'nowrap', display: 'inline-block', letterSpacing: '0.01em' }}>
-      {cfg.label}
-    </span>
-  );
+  return <span style={{ background:cfg.bg, color:cfg.color, border:`1px solid ${cfg.border}`, borderRadius:20, fontSize:11, padding:'3px 10px', fontWeight:500, whiteSpace:'nowrap', display:'inline-block', backdropFilter:'blur(8px)', WebkitBackdropFilter:'blur(8px)' }}>{cfg.label}</span>;
 }
 
-/* ── BTN ── */
-function Btn({ variant = 'primary', children, onClick, disabled, loading, style: xs, size = 'md', fullWidth }) {
+/* ─────────────────────────────────────────
+   BUTTON
+───────────────────────────────────────── */
+function Btn({ variant='primary', children, onClick, disabled, loading, style:xs, size='md', fullWidth }) {
   const c = useC();
   const [hov, setHov] = React.useState(false);
-  const pad = { sm: '6px 12px', md: '8px 16px', lg: '10px 20px' }[size] || '8px 16px';
+  const [act, setAct] = React.useState(false);
+  const pad = {sm:'6px 14px',md:'9px 18px',lg:'11px 24px'}[size]||'9px 18px';
+  const spring = 'all 0.2s cubic-bezier(0.34,1.56,0.64,1)';
   const base = {
-    display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: 6,
-    borderRadius: 6, fontSize: 14, fontWeight: 500,
-    cursor: disabled || loading ? 'not-allowed' : 'pointer',
-    border: '1px solid transparent',
-    transition: 'all 0.15s ease',
-    padding: pad,
-    opacity: disabled ? 0.5 : 1,
-    transform: hov && !disabled && !loading ? 'scale(1.01)' : 'scale(1)',
-    whiteSpace: 'nowrap',
-    width: fullWidth ? '100%' : undefined,
-    letterSpacing: '-0.01em',
+    display:'inline-flex', alignItems:'center', justifyContent:'center', gap:7,
+    borderRadius:8, fontSize:14, fontWeight:500,
+    cursor:disabled||loading?'not-allowed':'pointer',
+    transition:spring, padding:pad, opacity:disabled?0.45:1,
+    transform:act?'scale(0.97)':hov?'scale(1.02)':'scale(1)',
+    whiteSpace:'nowrap', width:fullWidth?'100%':undefined,
+    backdropFilter:'blur(12px) saturate(1.8)', WebkitBackdropFilter:'blur(12px) saturate(1.8)',
     ...xs,
   };
-  if (variant === 'primary') Object.assign(base, { background: hov ? c.accentHover : c.accent, color: '#fff' });
-  if (variant === 'ghost')   Object.assign(base, { background: hov ? c.accentGlow : 'transparent', color: c.accent, borderColor: c.accent });
-  if (variant === 'danger')  Object.assign(base, { background: hov ? c.dangerHover : c.danger, color: '#fff' });
-  if (variant === 'surface') Object.assign(base, { background: hov ? c.surface2 : c.surface, color: c.textSecondary, borderColor: c.border });
-
+  const ar = c.accent==='#60A5FA'?'96,165,250':'96,165,250';
+  if (variant==='primary') Object.assign(base, {
+    background:hov?`rgba(${ar},0.18)`:`rgba(${ar},0.10)`,
+    border:`1px solid rgba(${ar},${hov?0.75:0.45})`,
+    color:c.accent,
+    textShadow:hov?`0 0 22px rgba(${ar},0.65)`:`0 0 14px rgba(${ar},0.3)`,
+    boxShadow:hov?`0 0 20px rgba(${ar},0.12),inset 0 1px 0 rgba(255,255,255,0.2)`:'inset 0 1px 0 rgba(255,255,255,0.12)',
+  });
+  if (variant==='ghost') Object.assign(base, {
+    background:hov?'rgba(255,255,255,0.09)':'rgba(255,255,255,0.05)',
+    border:'1px solid rgba(255,255,255,0.18)', color:'#F8F8FF',
+    boxShadow:'inset 0 1px 0 rgba(255,255,255,0.15)',
+  });
+  if (variant==='danger') Object.assign(base, {
+    background:hov?'rgba(255,107,107,0.18)':'rgba(255,107,107,0.10)',
+    border:`1px solid rgba(255,107,107,${hov?0.7:0.4})`,
+    color:'#FF6B6B',
+    textShadow:hov?'0 0 18px rgba(255,107,107,0.55)':'none',
+  });
+  if (variant==='surface') Object.assign(base, {
+    background:hov?'rgba(255,255,255,0.10)':'rgba(255,255,255,0.05)',
+    border:'1px solid rgba(255,255,255,0.14)', color:'rgba(248,248,255,0.6)',
+  });
   return (
-    <button style={base} onClick={disabled || loading ? undefined : onClick}
-      onMouseEnter={() => setHov(true)} onMouseLeave={() => setHov(false)}>
-      {loading && <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" style={{ animation: 'spin 0.7s linear infinite', flexShrink: 0 }}><path d="M12 3a9 9 0 0 1 9 9"/><path d="M21 12a9 9 0 01-9 9M3 12a9 9 0 019-9" strokeOpacity="0.3"/></svg>}
+    <button style={base} onClick={disabled||loading?undefined:onClick}
+      onMouseEnter={()=>setHov(true)} onMouseLeave={()=>{setHov(false);setAct(false);}}
+      onMouseDown={()=>setAct(true)} onMouseUp={()=>setAct(false)}>
+      {loading&&<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" style={{animation:'spin 0.7s linear infinite',flexShrink:0}}><path d="M12 3a9 9 0 0 1 9 9"/><path d="M21 12a9 9 0 01-9 9M3 12a9 9 0 019-9" strokeOpacity="0.3"/></svg>}
       {children}
     </button>
   );
 }
 
-/* ── FORM CONTROLS ── */
-function FormInput({ label, value, onChange, type = 'text', placeholder, disabled, autoFocus, onKeyDown, style: xs }) {
+/* ─────────────────────────────────────────
+   FORM CONTROLS
+───────────────────────────────────────── */
+function FormInput({ label, value, onChange, type='text', placeholder, disabled, autoFocus, onKeyDown, style:xs }) {
   const c = useC();
   const [foc, setFoc] = React.useState(false);
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 6, ...xs }}>
-      {label && <label style={{ fontSize: 12, color: c.textSecondary, fontWeight: 500 }}>{label}</label>}
-      <input type={type} value={value} onChange={e => onChange && onChange(e.target.value)}
+    <div style={{ display:'flex', flexDirection:'column', gap:6, ...xs }}>
+      {label&&<label style={{ fontSize:12, color:c.textSecondary, fontWeight:500, letterSpacing:'0.02em' }}>{label}</label>}
+      <input type={type} value={value} onChange={e=>onChange&&onChange(e.target.value)}
         placeholder={placeholder} disabled={disabled} autoFocus={autoFocus} onKeyDown={onKeyDown}
-        onFocus={() => setFoc(true)} onBlur={() => setFoc(false)}
-        style={{ background: c.surface2, border: `1px solid ${foc ? c.accent : c.border}`, borderRadius: 6, padding: '10px 12px', color: disabled ? c.textSecondary : c.textPrimary, fontSize: 14, outline: 'none', width: '100%', boxShadow: foc ? '0 0 0 3px rgba(99,102,241,0.15)' : 'none', transition: 'border-color 0.15s, box-shadow 0.15s', opacity: disabled ? 0.6 : 1 }} />
+        onFocus={()=>setFoc(true)} onBlur={()=>setFoc(false)}
+        style={{ backdropFilter:'blur(20px) saturate(1.4)', WebkitBackdropFilter:'blur(20px) saturate(1.4)', background:foc?'rgba(255,255,255,0.08)':'rgba(255,255,255,0.05)', border:`1px solid ${foc?'rgba(96,165,250,0.5)':'rgba(255,255,255,0.1)'}`, borderRadius:8, padding:'10px 13px', color:disabled?'rgba(248,248,255,0.35)':c.textPrimary, fontSize:14, outline:'none', width:'100%', boxShadow:foc?'0 0 0 3px rgba(96,165,250,0.1), inset 0 1px 0 rgba(255,255,255,0.15)':'inset 0 1px 0 rgba(255,255,255,0.08)', transition:'all 0.15s ease', opacity:disabled?0.6:1 }} />
     </div>
   );
 }
 
-function FormTextarea({ label, value, onChange, placeholder, rows = 3, style: xs }) {
+function FormTextarea({ label, value, onChange, placeholder, rows=3, style:xs }) {
   const c = useC();
   const [foc, setFoc] = React.useState(false);
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 6, ...xs }}>
-      {label && <label style={{ fontSize: 12, color: c.textSecondary, fontWeight: 500 }}>{label}</label>}
-      <textarea value={value} onChange={e => onChange && onChange(e.target.value)}
-        placeholder={placeholder} rows={rows}
-        onFocus={() => setFoc(true)} onBlur={() => setFoc(false)}
-        style={{ background: c.surface2, border: `1px solid ${foc ? c.accent : c.border}`, borderRadius: 6, padding: '10px 12px', color: c.textPrimary, fontSize: 14, outline: 'none', width: '100%', resize: 'vertical', minHeight: 80, boxShadow: foc ? '0 0 0 3px rgba(99,102,241,0.15)' : 'none', transition: 'border-color 0.15s, box-shadow 0.15s', fontFamily: 'Inter, sans-serif', lineHeight: 1.6 }} />
+    <div style={{ display:'flex', flexDirection:'column', gap:6, ...xs }}>
+      {label&&<label style={{ fontSize:12, color:c.textSecondary, fontWeight:500, letterSpacing:'0.02em' }}>{label}</label>}
+      <textarea value={value} onChange={e=>onChange&&onChange(e.target.value)} placeholder={placeholder} rows={rows}
+        onFocus={()=>setFoc(true)} onBlur={()=>setFoc(false)}
+        style={{ backdropFilter:'blur(20px) saturate(1.4)', WebkitBackdropFilter:'blur(20px) saturate(1.4)', background:foc?'rgba(255,255,255,0.08)':'rgba(255,255,255,0.05)', border:`1px solid ${foc?'rgba(96,165,250,0.5)':'rgba(255,255,255,0.1)'}`, borderRadius:8, padding:'10px 13px', color:c.textPrimary, fontSize:14, outline:'none', width:'100%', resize:'vertical', minHeight:80, boxShadow:foc?'0 0 0 3px rgba(96,165,250,0.1), inset 0 1px 0 rgba(255,255,255,0.15)':'inset 0 1px 0 rgba(255,255,255,0.08)', transition:'all 0.15s ease', fontFamily:'DM Sans,sans-serif', lineHeight:1.6 }} />
     </div>
   );
 }
 
-function FormSelect({ label, value, onChange, options, style: xs }) {
+function FormSelect({ label, value, onChange, options, style:xs }) {
   const c = useC();
   const [foc, setFoc] = React.useState(false);
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 6, ...xs }}>
-      {label && <label style={{ fontSize: 12, color: c.textSecondary, fontWeight: 500 }}>{label}</label>}
-      <div style={{ position: 'relative' }}>
-        <select value={value} onChange={e => onChange && onChange(e.target.value)}
-          onFocus={() => setFoc(true)} onBlur={() => setFoc(false)}
-          style={{ background: c.surface2, border: `1px solid ${foc ? c.accent : c.border}`, borderRadius: 6, padding: '10px 36px 10px 12px', color: c.textPrimary, fontSize: 14, outline: 'none', width: '100%', cursor: 'pointer', boxShadow: foc ? '0 0 0 3px rgba(99,102,241,0.15)' : 'none', transition: 'border-color 0.15s, box-shadow 0.15s', appearance: 'none', WebkitAppearance: 'none' }}>
-          {options.map(o => <option key={o.value} value={o.value} style={{ background: '#1A1A24', color: '#F0F0FF' }}>{o.label}</option>)}
+    <div style={{ display:'flex', flexDirection:'column', gap:6, ...xs }}>
+      {label&&<label style={{ fontSize:12, color:c.textSecondary, fontWeight:500, letterSpacing:'0.02em' }}>{label}</label>}
+      <div style={{ position:'relative' }}>
+        <select value={value} onChange={e=>onChange&&onChange(e.target.value)}
+          onFocus={()=>setFoc(true)} onBlur={()=>setFoc(false)}
+          style={{ backdropFilter:'blur(20px)', WebkitBackdropFilter:'blur(20px)', background:foc?'rgba(30,22,58,0.9)':'rgba(22,20,40,0.88)', border:`1px solid ${foc?'rgba(96,165,250,0.5)':'rgba(255,255,255,0.1)'}`, borderRadius:8, padding:'10px 36px 10px 13px', color:c.textPrimary, fontSize:14, outline:'none', width:'100%', cursor:'pointer', boxShadow:foc?'0 0 0 3px rgba(96,165,250,0.1)':'none', transition:'all 0.15s', appearance:'none', WebkitAppearance:'none' }}>
+          {options.map(o=><option key={o.value} value={o.value} style={{ background:'#161428', color:'#F8F8FF' }}>{o.label}</option>)}
         </select>
-        <div style={{ position: 'absolute', right: 11, top: '50%', transform: 'translateY(-50%)', pointerEvents: 'none' }}>
-          <Icon name="chevD" size={13} color={c.textSecondary} />
+        <div style={{ position:'absolute', right:11, top:'50%', transform:'translateY(-50%)', pointerEvents:'none' }}>
+          <Icon name="chevD" size={13} color={c.accent} />
         </div>
       </div>
     </div>
   );
 }
 
-/* ── CONFIRM DIALOG ── */
+/* ─────────────────────────────────────────
+   CONFIRM DIALOG
+───────────────────────────────────────── */
 function ConfirmDialog({ title, message, onConfirm, onCancel }) {
   const c = useC();
   return (
-    <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.7)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 300, animation: 'fadeIn 0.15s ease', padding: 20 }}>
-      <div style={{ background: c.surface2, border: `1px solid ${c.border}`, borderRadius: 8, padding: 24, width: '100%', maxWidth: 380, animation: 'fadeSlideUp 0.2s ease' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 10 }}>
-          <div style={{ width: 32, height: 32, borderRadius: 8, background: 'rgba(239,68,68,0.12)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-            <Icon name="trash" size={15} color={c.danger} />
+    <div style={{ position:'fixed', inset:0, background:'rgba(0,0,0,0.6)', backdropFilter:'blur(10px)', WebkitBackdropFilter:'blur(10px)', display:'flex', alignItems:'center', justifyContent:'center', zIndex:400, animation:'fadeIn 0.15s ease', padding:20 }}>
+      <div style={{ ...GLASS.deep, borderRadius:18, padding:28, width:'100%', maxWidth:380, animation:'fadeSlideUp 0.22s ease', position:'relative', overflow:'hidden' }}>
+        <div style={{ position:'absolute', top:0, left:'15%', right:'15%', height:1, background:'linear-gradient(90deg,transparent,rgba(255,255,255,0.55),transparent)', pointerEvents:'none' }} />
+        <div style={{ display:'flex', alignItems:'center', gap:12, marginBottom:12 }}>
+          <div style={{ width:36, height:36, borderRadius:10, background:'rgba(255,107,107,0.12)', border:'1px solid rgba(255,107,107,0.25)', display:'flex', alignItems:'center', justifyContent:'center', flexShrink:0 }}>
+            <Icon name="trash" size={16} color={c.danger} />
           </div>
-          <h3 style={{ fontSize: 15, fontWeight: 500, color: c.textPrimary }}>{title || 'Confirm Delete'}</h3>
+          <h3 style={{ fontSize:15, fontWeight:600, color:c.textPrimary }}>{title||'Confirm Delete'}</h3>
         </div>
-        <p style={{ fontSize: 13, color: c.textSecondary, marginBottom: 20, lineHeight: 1.65, paddingLeft: 42 }}>{message}</p>
-        <div style={{ display: 'flex', gap: 8, justifyContent: 'flex-end' }}>
+        <p style={{ fontSize:13, color:c.textSecondary, marginBottom:22, lineHeight:1.7, paddingLeft:48 }}>{message}</p>
+        <div style={{ display:'flex', gap:8, justifyContent:'flex-end' }}>
           <Btn variant="surface" size="sm" onClick={onCancel}>Cancel</Btn>
-          <Btn variant="danger"  size="sm" onClick={onConfirm}>Delete project</Btn>
+          <Btn variant="danger"  size="sm" onClick={onConfirm}>Delete</Btn>
         </div>
       </div>
     </div>
   );
 }
 
-/* ── DONUT CHART ── */
+/* ─────────────────────────────────────────
+   DONUT CHART
+───────────────────────────────────────── */
 function DonutChart({ projects }) {
   const c = useC();
-  const total  = projects.length;
-  if (!total) return <div style={{ height: 110, display: 'flex', alignItems: 'center', justifyContent: 'center', color: c.textSecondary, fontSize: 13 }}>No data</div>;
-  const done   = projects.filter(p => p.status === 'done').length;
-  const inProg = projects.filter(p => p.status === 'in_progress').length;
-  const todo   = projects.filter(p => p.status === 'todo').length;
-  const size = 110, r = 38, cx = size / 2, cy = size / 2, circ = 2 * Math.PI * r;
-  const segs = [
-    { count: done,   color: c.success },
-    { count: inProg, color: c.accent  },
-    { count: todo,   color: c.border  },
-  ];
-  let cum = 0;
-  const arcs = segs.map(seg => {
-    const len = (seg.count / total) * circ;
-    const off = circ - cum;
-    cum += len;
-    return { ...seg, len, off };
-  });
+  const total = projects.length;
+  if (!total) return <div style={{ height:110, display:'flex', alignItems:'center', justifyContent:'center', color:c.textSecondary, fontSize:13 }}>No data yet</div>;
+  const done   = projects.filter(p=>p.status==='done').length;
+  const inProg = projects.filter(p=>p.status==='in_progress').length;
+  const todo   = projects.filter(p=>p.status==='todo').length;
+  const size=110, r=38, cx=size/2, cy=size/2, circ=2*Math.PI*r;
+  const segs = [{count:done,color:c.success},{count:inProg,color:c.accent},{count:todo,color:'rgba(255,255,255,0.18)'}];
+  let cum=0;
+  const arcs = segs.map(seg=>{ const len=(seg.count/total)*circ; const off=circ-cum; cum+=len; return {...seg,len,off}; });
   return (
-    <div style={{ display: 'flex', alignItems: 'center', gap: 20 }}>
-      <svg width={size} height={size} style={{ flexShrink: 0 }}>
-        <circle cx={cx} cy={cy} r={r} fill="none" stroke={c.surface2} strokeWidth={8} />
-        {arcs.map((arc, i) => arc.len > 0.5 ? (
-          <circle key={i} cx={cx} cy={cy} r={r} fill="none" stroke={arc.color} strokeWidth={8}
-            strokeDasharray={`${arc.len} ${circ - arc.len}`} strokeDashoffset={arc.off}
-            style={{ transform: 'rotate(-90deg)', transformOrigin: `${cx}px ${cy}px` }} />
-        ) : null)}
-        <text x={cx} y={cy - 3} textAnchor="middle" dominantBaseline="middle" fill="#F0F0FF" fontSize="18" fontWeight="600" fontFamily="Inter">{total}</text>
-        <text x={cx} y={cy + 14} textAnchor="middle" fill="#8B8BA7" fontSize="10" fontFamily="Inter">projects</text>
+    <div style={{ display:'flex', alignItems:'center', gap:20 }}>
+      <svg width={size} height={size} style={{ flexShrink:0 }}>
+        <circle cx={cx} cy={cy} r={r} fill="none" stroke="rgba(255,255,255,0.08)" strokeWidth={9} />
+        {arcs.map((arc,i)=>arc.len>0.5?<circle key={i} cx={cx} cy={cy} r={r} fill="none" stroke={arc.color} strokeWidth={9} strokeDasharray={`${arc.len} ${circ-arc.len}`} strokeDashoffset={arc.off} style={{ transform:'rotate(-90deg)', transformOrigin:`${cx}px ${cy}px`, transition:'all 0.5s ease' }} />:null)}
+        <text x={cx} y={cy-3} textAnchor="middle" dominantBaseline="middle" fill="#F8F8FF" fontSize="18" fontWeight="600" fontFamily="Sora">{total}</text>
+        <text x={cx} y={cy+14} textAnchor="middle" fill="rgba(248,248,255,0.5)" fontSize="10" fontFamily="DM Sans">projects</text>
       </svg>
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 9 }}>
-        {[{ label: 'Done', count: done, color: c.success }, { label: 'In Progress', count: inProg, color: c.accent }, { label: 'Todo', count: todo, color: c.textSecondary }].map(item => (
-          <div key={item.label} style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-            <div style={{ width: 7, height: 7, borderRadius: '50%', background: item.color, flexShrink: 0 }} />
-            <span style={{ fontSize: 12, color: c.textSecondary, minWidth: 76 }}>{item.label}</span>
-            <span style={{ fontSize: 12, color: c.textPrimary, fontWeight: 600 }}>{item.count}</span>
+      <div style={{ display:'flex', flexDirection:'column', gap:9 }}>
+        {[{label:'Done',count:done,color:c.success},{label:'Active',count:inProg,color:c.accent},{label:'Todo',count:todo,color:'rgba(248,248,255,0.4)'}].map(item=>(
+          <div key={item.label} style={{ display:'flex', alignItems:'center', gap:8 }}>
+            <div style={{ width:7, height:7, borderRadius:'50%', background:item.color, flexShrink:0 }} />
+            <span style={{ fontSize:12, color:c.textSecondary, minWidth:50 }}>{item.label}</span>
+            <span style={{ fontSize:12, color:c.textPrimary, fontWeight:600 }}>{item.count}</span>
           </div>
         ))}
       </div>
@@ -331,78 +398,91 @@ function DonutChart({ projects }) {
   );
 }
 
-/* ── EMPTY STATE ── */
+/* ─────────────────────────────────────────
+   EMPTY STATE
+───────────────────────────────────────── */
 function EmptyState({ title, description, action, onAction }) {
   const c = useC();
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '72px 20px', gap: 16 }}>
-      <svg width="56" height="56" viewBox="0 0 56 56" fill="none">
-        <rect x="6" y="14" width="44" height="34" rx="4" stroke={c.border} strokeWidth="1.5" />
-        <path d="M6 22h44" stroke={c.border} strokeWidth="1.5" />
-        <path d="M20 14v-3a2 2 0 012-2h12a2 2 0 012 2v3" stroke={c.border} strokeWidth="1.5" />
-        <circle cx="28" cy="36" r="7" stroke={c.borderHover} strokeWidth="1.5" />
-        <path d="M28 32v4l2.5 1.5" stroke={c.borderHover} strokeWidth="1.5" strokeLinecap="round" />
-      </svg>
-      <div style={{ textAlign: 'center', maxWidth: 300 }}>
-        <p style={{ fontSize: 15, fontWeight: 500, color: c.textPrimary, marginBottom: 6 }}>{title}</p>
-        <p style={{ fontSize: 13, color: c.textSecondary, lineHeight: 1.65 }}>{description}</p>
+    <div style={{ display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center', padding:'80px 20px', gap:18 }}>
+      <div style={{ ...GLASS.surface, borderRadius:16, padding:20, marginBottom:4 }}>
+        <svg width="48" height="48" viewBox="0 0 56 56" fill="none">
+          <rect x="6" y="14" width="44" height="34" rx="4" stroke="rgba(255,255,255,0.2)" strokeWidth="1.5" />
+          <path d="M6 22h44" stroke="rgba(255,255,255,0.15)" strokeWidth="1.5" />
+          <path d="M20 14v-3a2 2 0 012-2h12a2 2 0 012 2v3" stroke="rgba(255,255,255,0.2)" strokeWidth="1.5" />
+          <circle cx="28" cy="36" r="7" stroke="rgba(96,165,250,0.4)" strokeWidth="1.5" />
+          <path d="M28 32v4l2.5 1.5" stroke="rgba(96,165,250,0.4)" strokeWidth="1.5" strokeLinecap="round" />
+        </svg>
       </div>
-      {action && <Btn variant="primary" onClick={onAction} style={{ marginTop: 4 }}><Icon name="plus" size={14} color="white" />{action}</Btn>}
+      <div style={{ textAlign:'center', maxWidth:300 }}>
+        <p style={{ fontSize:16, fontWeight:600, color:c.textPrimary, marginBottom:7, fontFamily:'Sora,sans-serif' }}>{title}</p>
+        <p style={{ fontSize:13, color:c.textSecondary, lineHeight:1.7 }}>{description}</p>
+      </div>
+      {action&&<Btn variant="primary" onClick={onAction} style={{ marginTop:6 }}><Icon name="plus" size={14} color="currentColor"/>{action}</Btn>}
     </div>
   );
 }
 
-/* ── SIDEBAR ── */
+/* ─────────────────────────────────────────
+   SIDEBAR (desktop)
+───────────────────────────────────────── */
 const NAV_ITEMS = [
-  { id: 'dashboard', label: 'Dashboard', icon: 'grid' },
-  { id: 'projects',  label: 'Projects',  icon: 'briefcase' },
-  { id: 'profile',   label: 'Profile',   icon: 'user' },
+  { id:'dashboard', label:'Dashboard', icon:'grid' },
+  { id:'projects',  label:'Projects',  icon:'briefcase' },
+  { id:'profile',   label:'Profile',   icon:'user' },
 ];
 
 function NavItem({ item, isActive, collapsed, onClick }) {
   const c = useC();
   const [hov, setHov] = React.useState(false);
+  const lit = isActive || hov;
   return (
-    <button onClick={onClick} onMouseEnter={() => setHov(true)} onMouseLeave={() => setHov(false)}
-      title={collapsed ? item.label : undefined}
-      style={{ display: 'flex', alignItems: 'center', gap: 10, padding: collapsed ? '10px 0' : '9px 11px', borderRadius: 6, border: 'none', background: (isActive || hov) ? c.accentGlow : 'transparent', color: isActive ? c.accent : (hov ? c.textPrimary : c.textSecondary), cursor: 'pointer', transition: 'all 0.15s ease', width: '100%', justifyContent: collapsed ? 'center' : 'flex-start', position: 'relative', fontSize: 14, fontWeight: isActive ? 500 : 400, letterSpacing: '-0.01em', fontFamily: 'Inter, sans-serif' }}>
-      <div style={{ position: 'absolute', left: 0, top: '18%', width: 2, height: '64%', background: c.accent, borderRadius: '0 2px 2px 0', opacity: isActive ? 1 : 0, transition: 'opacity 0.15s ease' }} />
-      <Icon name={item.icon} size={16} color={isActive ? c.accent : (hov ? c.textPrimary : c.textSecondary)} />
-      {!collapsed && <span>{item.label}</span>}
+    <button onClick={onClick} onMouseEnter={()=>setHov(true)} onMouseLeave={()=>setHov(false)}
+      title={collapsed?item.label:undefined}
+      style={{ display:'flex', alignItems:'center', gap:10, padding:collapsed?'10px 0':'9px 12px', borderRadius:8, cursor:'pointer', transition:'all 0.2s cubic-bezier(0.34,1.56,0.64,1)', width:'100%', justifyContent:collapsed?'center':'flex-start', position:'relative', fontSize:14, fontWeight:isActive?500:400, fontFamily:'DM Sans,sans-serif',
+        background:lit?'linear-gradient(135deg,rgba(255,255,255,0.16) 0%,rgba(255,255,255,0.06) 100%)':'transparent',
+        border:lit?'1px solid rgba(255,255,255,0.2)':'1px solid transparent',
+        color:isActive?c.accent:(hov?c.textPrimary:c.textSecondary),
+        backdropFilter:lit?'blur(16px) saturate(2)':'none', WebkitBackdropFilter:lit?'blur(16px) saturate(2)':'none',
+        boxShadow:lit?'inset 0 1px 0 rgba(255,255,255,0.3), 0 2px 10px rgba(0,0,0,0.18)':'none',
+        borderLeft:isActive?`2px solid ${c.accent}`:'2px solid transparent',
+      }}>
+      <Icon name={item.icon} size={16} color={isActive?c.accent:(hov?c.textPrimary:c.textSecondary)} />
+      {!collapsed&&<span>{item.label}</span>}
     </button>
   );
 }
 
 function Sidebar({ page, navigate, user, collapsed, setCollapsed, onLogout }) {
   const c = useC();
-  const [hov, setHov] = React.useState(false);
+  const [hovLogout, setHovLogout] = React.useState(false);
   return (
-    <aside style={{ width: collapsed ? 60 : 220, flexShrink: 0, background: c.surface, borderRight: `1px solid ${c.border}`, display: 'flex', flexDirection: 'column', transition: 'width 0.22s cubic-bezier(0.4,0,0.2,1)', overflow: 'hidden', position: 'relative', zIndex: 10, height: '100%' }}>
-      <div style={{ padding: collapsed ? '18px 0' : '18px 16px', borderBottom: `1px solid ${c.border}`, display: 'flex', alignItems: 'center', justifyContent: collapsed ? 'center' : 'space-between', minHeight: 62 }}>
-        {collapsed ? (
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M12 2L2 21h20L12 2z" fill={c.accent} /><path d="M12 9v7M9.5 14.5h5" stroke="white" strokeWidth="1.6" strokeLinecap="round" /></svg>
-        ) : <Logo size="sm" />}
-        <button onClick={() => setCollapsed(!collapsed)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: c.textSecondary, padding: 4, borderRadius: 4, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, transition: 'color 0.15s' }}>
-          <Icon name={collapsed ? 'chevR' : 'chevL'} size={14} color={c.textSecondary} />
+    <aside style={{ width:collapsed?62:224, flexShrink:0, backdropFilter:'blur(64px) saturate(2.2)', WebkitBackdropFilter:'blur(64px) saturate(2.2)', background:'linear-gradient(180deg,rgba(255,255,255,0.13) 0%,rgba(255,255,255,0.06) 100%)', borderRight:'1px solid rgba(255,255,255,0.16)', boxShadow:'4px 0 40px rgba(0,0,0,0.3), inset -1px 0 0 rgba(255,255,255,0.08)', display:'flex', flexDirection:'column', transition:'width 0.3s cubic-bezier(0.34,1.56,0.64,1)', overflow:'hidden', position:'relative', zIndex:10, height:'100%' }}>
+      <div style={{ padding:collapsed?'18px 0':'18px 16px', borderBottom:'1px solid rgba(255,255,255,0.08)', display:'flex', alignItems:'center', justifyContent:collapsed?'center':'space-between', minHeight:64 }}>
+        {collapsed
+          ? <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><defs><linearGradient id="lgc" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stopColor="#60A5FA"/><stop offset="100%" stopColor="#A78BFA"/></linearGradient></defs><path d="M12 2L2 21h20L12 2z" fill="url(#lgc)"/><path d="M12 9v7M9.5 14.5h5" stroke="white" strokeWidth="1.6" strokeLinecap="round"/></svg>
+          : <Logo size="sm" />}
+        <button onClick={()=>setCollapsed(!collapsed)} style={{ background:'none', border:'none', cursor:'pointer', color:c.textSecondary, padding:4, borderRadius:6, display:'flex', flexShrink:0, transition:'color 0.15s' }}>
+          <Icon name={collapsed?'chevR':'chevL'} size={14} color={c.textSecondary} />
         </button>
       </div>
-
-      <nav style={{ flex: 1, padding: '10px 8px', display: 'flex', flexDirection: 'column', gap: 2, overflowY: 'auto' }}>
-        {NAV_ITEMS.map(item => <NavItem key={item.id} item={item} isActive={page === item.id} collapsed={collapsed} onClick={() => navigate(item.id)} />)}
+      <nav style={{ flex:1, padding:'10px 8px', display:'flex', flexDirection:'column', gap:3, overflowY:'auto' }}>
+        {NAV_ITEMS.map(item=><NavItem key={item.id} item={item} isActive={page===item.id} collapsed={collapsed} onClick={()=>navigate(item.id)} />)}
       </nav>
-
-      <div style={{ padding: collapsed ? '10px 4px' : '10px 8px', borderTop: `1px solid ${c.border}` }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8, padding: collapsed ? '6px 0' : '6px 4px', justifyContent: collapsed ? 'center' : 'flex-start' }}>
-          <div style={{ width: 30, height: 30, borderRadius: '50%', background: `linear-gradient(135deg, ${c.accent}99, ${c.accent})`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 11, fontWeight: 600, color: 'white', flexShrink: 0, letterSpacing: '0.04em' }}>{user.initials}</div>
-          {!collapsed && (
+      <div style={{ padding:collapsed?'12px 4px':'12px 8px', borderTop:'1px solid rgba(255,255,255,0.08)' }}>
+        <div style={{ display:'flex', alignItems:'center', gap:9, padding:collapsed?'6px 0':'6px 4px', justifyContent:collapsed?'center':'flex-start' }}>
+          <div style={{ width:32, height:32, borderRadius:'50%', background:'conic-gradient(from 135deg, #60A5FA, #A78BFA, #FF6B9D, #60A5FA)', padding:1.5, flexShrink:0 }}>
+            <div style={{ width:'100%', height:'100%', borderRadius:'50%', background:'linear-gradient(135deg,#1a1030,#0d1a2e)', display:'flex', alignItems:'center', justifyContent:'center', fontSize:11, fontWeight:700, color:'#F8F8FF', letterSpacing:'0.04em' }}>{user.initials}</div>
+          </div>
+          {!collapsed&&(
             <>
-              <div style={{ flex: 1, minWidth: 0 }}>
-                <div style={{ fontSize: 13, fontWeight: 500, color: c.textPrimary, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{user.name}</div>
-                <div style={{ fontSize: 11, color: c.textSecondary, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', marginTop: 1 }}>{user.email}</div>
+              <div style={{ flex:1, minWidth:0 }}>
+                <div style={{ fontSize:13, fontWeight:500, color:c.textPrimary, overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap' }}>{user.name}</div>
+                <div style={{ fontSize:11, color:c.textSecondary, overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap', marginTop:1 }}>{user.email}</div>
               </div>
-              <button onClick={onLogout} onMouseEnter={() => setHov(true)} onMouseLeave={() => setHov(false)} title="Sign out"
-                style={{ background: hov ? 'rgba(239,68,68,0.1)' : 'transparent', border: 'none', cursor: 'pointer', color: hov ? c.danger : c.textSecondary, padding: 6, borderRadius: 4, display: 'flex', alignItems: 'center', transition: 'all 0.15s', flexShrink: 0 }}>
-                <Icon name="logout" size={14} color={hov ? c.danger : c.textSecondary} />
+              <button onClick={onLogout} onMouseEnter={()=>setHovLogout(true)} onMouseLeave={()=>setHovLogout(false)} title="Sign out"
+                style={{ background:hovLogout?'rgba(255,107,107,0.12)':'transparent', border:'none', cursor:'pointer', color:hovLogout?c.danger:c.textSecondary, padding:6, borderRadius:6, display:'flex', alignItems:'center', transition:'all 0.15s', flexShrink:0 }}>
+                <Icon name="logout" size={14} color={hovLogout?c.danger:c.textSecondary} />
               </button>
             </>
           )}
@@ -412,34 +492,134 @@ function Sidebar({ page, navigate, user, collapsed, setCollapsed, onLogout }) {
   );
 }
 
-function AppLayout({ children, page, navigate, user, sidebarCollapsed, setSidebarCollapsed, onLogout }) {
+/* ─────────────────────────────────────────
+   MOBILE DRAWER SIDEBAR
+───────────────────────────────────────── */
+function MobileDrawer({ page, navigate, user, open, onClose, onLogout }) {
+  const c = useC();
+  if (!open) return null;
   return (
-    <div style={{ display: 'flex', height: '100%', background: C.bg, overflow: 'hidden' }}>
-      <Sidebar page={page} navigate={navigate} user={user} collapsed={sidebarCollapsed} setCollapsed={setSidebarCollapsed} onLogout={onLogout} />
-      <main style={{ flex: 1, overflow: 'auto', minWidth: 0 }}>{children}</main>
+    <div style={{ position:'fixed', inset:0, zIndex:500 }}>
+      <div onClick={onClose} style={{ position:'absolute', inset:0, background:'rgba(0,0,0,0.5)', backdropFilter:'blur(6px)', WebkitBackdropFilter:'blur(6px)', animation:'fadeIn 0.2s ease' }} />
+      <aside style={{ position:'absolute', left:0, top:0, bottom:0, width:280, ...GLASS.deep, borderRight:'1px solid rgba(255,255,255,0.18)', display:'flex', flexDirection:'column', animation:'drawerIn 0.28s cubic-bezier(0.34,1.56,0.64,1)' }}>
+        <div style={{ padding:'18px 20px', borderBottom:'1px solid rgba(255,255,255,0.08)', display:'flex', alignItems:'center', justifyContent:'space-between' }}>
+          <Logo size="sm" />
+          <button onClick={onClose} style={{ background:'none', border:'none', cursor:'pointer', padding:4, borderRadius:6 }}>
+            <Icon name="x" size={18} color={c.textSecondary} />
+          </button>
+        </div>
+        <nav style={{ flex:1, padding:'12px 12px', display:'flex', flexDirection:'column', gap:4 }}>
+          {NAV_ITEMS.map(item=>(
+            <button key={item.id} onClick={()=>{ navigate(item.id); onClose(); }}
+              style={{ display:'flex', alignItems:'center', gap:12, padding:'12px 14px', borderRadius:10, border:'none', background:page===item.id?'rgba(96,165,250,0.12)':'transparent', borderLeft:page===item.id?'2px solid #60A5FA':'2px solid transparent', color:page===item.id?c.accent:c.textSecondary, cursor:'pointer', fontSize:15, fontWeight:page===item.id?500:400, fontFamily:'DM Sans,sans-serif', transition:'all 0.15s', width:'100%', textAlign:'left' }}>
+              <Icon name={item.icon} size={18} color={page===item.id?c.accent:c.textSecondary} />
+              {item.label}
+            </button>
+          ))}
+        </nav>
+        <div style={{ padding:'16px 16px', borderTop:'1px solid rgba(255,255,255,0.08)', display:'flex', alignItems:'center', justifyContent:'space-between' }}>
+          <div style={{ display:'flex', alignItems:'center', gap:10 }}>
+            <div style={{ width:36, height:36, borderRadius:'50%', background:'conic-gradient(from 135deg,#60A5FA,#A78BFA,#FF6B9D,#60A5FA)', padding:2, flexShrink:0 }}>
+              <div style={{ width:'100%', height:'100%', borderRadius:'50%', background:'linear-gradient(135deg,#1a1030,#0d1a2e)', display:'flex', alignItems:'center', justifyContent:'center', fontSize:12, fontWeight:700, color:'#F8F8FF' }}>{user.initials}</div>
+            </div>
+            <div>
+              <div style={{ fontSize:14, fontWeight:500, color:c.textPrimary }}>{user.name}</div>
+              <div style={{ fontSize:11, color:c.textSecondary }}>{user.email}</div>
+            </div>
+          </div>
+          <button onClick={onLogout} style={{ background:'rgba(255,107,107,0.1)', border:'1px solid rgba(255,107,107,0.25)', borderRadius:8, cursor:'pointer', color:c.danger, padding:'8px 10px', display:'flex', alignItems:'center' }}>
+            <Icon name="logout" size={15} color={c.danger} />
+          </button>
+        </div>
+      </aside>
     </div>
   );
 }
 
-/* ── LANDING PAGE ── */
-const FEATURES = [
-  { icon: 'briefcase', title: 'Project Tracking',   desc: 'Manage every project from kickoff to deployment with priorities, milestones, and real-time status.' },
-  { icon: 'hash',      title: 'Task Management',    desc: 'Break projects into tasks and subtasks. Assign owners, track progress, attach files — all in one place.' },
-  { icon: 'users',     title: 'Team Collaboration', desc: 'Invite teammates, assign roles, and share notes. Three-tier permissions keep everyone aligned.' },
-];
-const AVATARS = [{ init: 'AM', hue: 240 }, { init: 'JK', hue: 270 }, { init: 'SR', hue: 200 }, { init: 'TL', hue: 300 }];
+/* ─────────────────────────────────────────
+   MOBILE BOTTOM NAV
+───────────────────────────────────────── */
+function MobileBottomNav({ page, navigate }) {
+  const c = useC();
+  return (
+    <div style={{ position:'fixed', bottom:0, left:0, right:0, zIndex:100, paddingBottom:'env(safe-area-inset-bottom,0px)', animation:'mobileNavIn 0.3s ease', ...GLASS.deep, borderTop:'1px solid rgba(255,255,255,0.14)', borderRadius:'16px 16px 0 0' }}>
+      <div style={{ display:'flex', padding:'8px 12px 10px' }}>
+        {NAV_ITEMS.map(item=>{
+          const active = page===item.id;
+          return (
+            <button key={item.id} onClick={()=>navigate(item.id)}
+              style={{ flex:1, display:'flex', flexDirection:'column', alignItems:'center', gap:4, padding:'8px 4px', border:'none', background:'none', cursor:'pointer', transition:'all 0.2s cubic-bezier(0.34,1.56,0.64,1)', color:active?c.accent:c.textSecondary }}>
+              <div style={{ position:'relative' }}>
+                {active&&<div style={{ position:'absolute', inset:-4, borderRadius:'50%', background:`rgba(96,165,250,0.12)`, backdropFilter:'blur(8px)' }} />}
+                <Icon name={item.icon} size={22} color={active?c.accent:c.textSecondary} />
+              </div>
+              <span style={{ fontSize:10, fontWeight:active?600:400, letterSpacing:'0.01em' }}>{item.label}</span>
+            </button>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
 
-function FeatureCard({ feat }) {
+/* ─────────────────────────────────────────
+   MOBILE TOPBAR
+───────────────────────────────────────── */
+function MobileTopBar({ title, onMenuOpen }) {
+  const c = useC();
+  return (
+    <div style={{ position:'sticky', top:0, zIndex:50, padding:'12px 16px', ...GLASS.deep, borderBottom:'1px solid rgba(255,255,255,0.1)', display:'flex', alignItems:'center', gap:12 }}>
+      <button onClick={onMenuOpen} style={{ background:'none', border:'none', cursor:'pointer', padding:4, borderRadius:6, display:'flex', color:c.textSecondary }}>
+        <Icon name="menu" size={20} color={c.textSecondary} />
+      </button>
+      <Logo size="sm" />
+    </div>
+  );
+}
+
+/* ─────────────────────────────────────────
+   APP LAYOUT
+───────────────────────────────────────── */
+function AppLayout({ children, page, navigate, user, sidebarCollapsed, setSidebarCollapsed, onLogout }) {
+  const mobile = useMobile();
+  const [drawerOpen, setDrawerOpen] = React.useState(false);
+  return (
+    <div style={{ display:'flex', height:'100%', background:'transparent', overflow:'hidden', position:'relative', zIndex:1 }}>
+      {!mobile&&(
+        <Sidebar page={page} navigate={navigate} user={user} collapsed={sidebarCollapsed} setCollapsed={setSidebarCollapsed} onLogout={onLogout} />
+      )}
+      <div style={{ flex:1, display:'flex', flexDirection:'column', overflow:'hidden', minWidth:0 }}>
+        {mobile&&<MobileTopBar title={page} onMenuOpen={()=>setDrawerOpen(true)} />}
+        <main style={{ flex:1, overflow:'auto', minWidth:0 }}>{children}</main>
+      </div>
+      {mobile&&<MobileBottomNav page={page} navigate={navigate} />}
+      {mobile&&<MobileDrawer page={page} navigate={navigate} user={user} open={drawerOpen} onClose={()=>setDrawerOpen(false)} onLogout={onLogout} />}
+    </div>
+  );
+}
+
+/* ─────────────────────────────────────────
+   LANDING PAGE
+───────────────────────────────────────── */
+const FEATURES = [
+  { icon:'briefcase', title:'Project Tracking',   desc:'Manage every project from kickoff to deployment with priorities, milestones, and real-time status.',      color:'rgba(96,165,250,0.35)'  },
+  { icon:'hash',      title:'Task Management',    desc:'Break projects into tasks and subtasks. Assign owners, track progress, attach files — all in one place.',  color:'rgba(167,139,250,0.35)' },
+  { icon:'users',     title:'Team Collaboration', desc:'Invite teammates, assign roles, and share notes. Three-tier permissions keep everyone aligned.',           color:'rgba(168,255,120,0.3)'  },
+];
+const AVATARS = [{init:'AM',col:'#60A5FA'},{init:'JK',col:'#A78BFA'},{init:'SR',col:'#FF6B9D'},{init:'TL',col:'#FFD166'}];
+
+function FeatureCard({ feat, idx }) {
   const c = useC();
   const [hov, setHov] = React.useState(false);
   return (
-    <div onMouseEnter={() => setHov(true)} onMouseLeave={() => setHov(false)}
-      style={{ background: c.surface, border: `1px solid ${hov ? c.borderHover : c.border}`, borderRadius: 8, padding: 24, transition: 'border-color 0.2s, transform 0.2s', transform: hov ? 'translateY(-3px)' : 'translateY(0)' }}>
-      <div style={{ width: 38, height: 38, background: c.accentGlow, borderRadius: 8, display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 16 }}>
-        <Icon name={feat.icon} size={18} color={c.accent} />
+    <div onMouseEnter={()=>setHov(true)} onMouseLeave={()=>setHov(false)}
+      style={{ ...(hov?GLASS.lifted:GLASS.surface), borderRadius:18, padding:28, transition:'all 0.25s cubic-bezier(0.34,1.56,0.64,1)', transform:hov?'translateY(-5px)':'translateY(0)', position:'relative', overflow:'hidden', animation:`cardReveal 0.5s ease ${idx*0.1}s both` }}>
+      <div style={{ position:'absolute', top:0, left:'12%', right:'12%', height:1, background:'linear-gradient(90deg,transparent,rgba(255,255,255,0.45),transparent)', pointerEvents:'none' }} />
+      <div style={{ width:44, height:44, borderRadius:12, background:'rgba(255,255,255,0.06)', border:'1px solid rgba(255,255,255,0.1)', display:'flex', alignItems:'center', justifyContent:'center', marginBottom:18, boxShadow:`0 0 24px ${feat.color}` }}>
+        <Icon name={feat.icon} size={20} color={c.accent} />
       </div>
-      <h3 style={{ fontSize: 15, fontWeight: 500, color: c.textPrimary, marginBottom: 8, letterSpacing: '-0.01em' }}>{feat.title}</h3>
-      <p style={{ fontSize: 13, color: c.textSecondary, lineHeight: 1.7 }}>{feat.desc}</p>
+      <h3 style={{ fontSize:15, fontWeight:600, color:c.textPrimary, marginBottom:9, fontFamily:'Sora,sans-serif' }}>{feat.title}</h3>
+      <p style={{ fontSize:13, color:c.textSecondary, lineHeight:1.75 }}>{feat.desc}</p>
     </div>
   );
 }
@@ -447,75 +627,73 @@ function FeatureCard({ feat }) {
 function LandingPage({ navigate }) {
   const c = useC();
   return (
-    <div style={{ minHeight: '100%', background: c.bg, color: c.textPrimary, display: 'flex', flexDirection: 'column', overflowX: 'hidden' }}>
-      <div style={{ position: 'fixed', inset: 0, backgroundImage: 'radial-gradient(circle, rgba(240,240,255,0.045) 1px, transparent 1px)', backgroundSize: '28px 28px', pointerEvents: 'none', zIndex: 0 }} />
-      <div style={{ position: 'fixed', top: -250, left: '50%', transform: 'translateX(-50%)', width: 700, height: 700, background: 'radial-gradient(circle, rgba(99,102,241,0.1) 0%, transparent 68%)', pointerEvents: 'none', zIndex: 0 }} />
-
-      <header style={{ position: 'relative', zIndex: 1, padding: '0 40px', height: 60, display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: `1px solid ${c.border}` }}>
+    <div style={{ minHeight:'100%', position:'relative', zIndex:1, color:c.textPrimary, display:'flex', flexDirection:'column', overflowX:'hidden' }}>
+      <header style={{ position:'sticky', top:0, zIndex:10, padding:'0 clamp(20px,4vw,48px)', height:64, display:'flex', alignItems:'center', justifyContent:'space-between', borderBottom:'1px solid rgba(255,255,255,0.07)', backdropFilter:'blur(40px) saturate(1.8)', WebkitBackdropFilter:'blur(40px) saturate(1.8)', background:'rgba(13,13,26,0.25)' }}>
         <Logo size="md" />
-        <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
-          <Btn variant="surface" size="sm" onClick={() => navigate('login')}>Login</Btn>
-          <Btn variant="primary" size="sm" onClick={() => navigate('register')}>Get Started</Btn>
+        <div style={{ display:'flex', gap:10, alignItems:'center' }}>
+          <Btn variant="surface" size="sm" onClick={()=>navigate('login')}>Login</Btn>
+          <Btn variant="primary" size="sm" onClick={()=>navigate('register')}>Get Started</Btn>
         </div>
       </header>
 
-      <section style={{ position: 'relative', zIndex: 1, flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '88px 40px 72px', textAlign: 'center', minHeight: 520 }}>
-        <div style={{ display: 'inline-flex', alignItems: 'center', gap: 7, background: c.accentGlow, border: `1px solid ${c.accent}33`, borderRadius: 20, padding: '5px 14px', marginBottom: 36, fontSize: 12, color: c.accent, fontWeight: 500 }}>
-          <div style={{ width: 6, height: 6, borderRadius: '50%', background: c.accent, animation: 'pulse 2s ease infinite' }} />
-          Now in public beta · Ship your next project
+      <section style={{ flex:1, display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center', padding:'clamp(60px,8vw,100px) clamp(20px,4vw,48px) 80px', textAlign:'center', minHeight:520 }}>
+        <div style={{ display:'inline-flex', alignItems:'center', gap:8, ...GLASS.surface, borderRadius:24, padding:'6px 16px', marginBottom:40, fontSize:12, color:c.accent, fontWeight:500, animation:'fadeSlideUp 0.4s ease' }}>
+          <div style={{ width:6, height:6, borderRadius:'50%', background:c.accent, animation:'pulse 2s ease infinite' }} />
+          Now in public beta — Ship your next project
         </div>
-        <h1 style={{ fontSize: 'clamp(40px, 6vw, 66px)', fontWeight: 600, lineHeight: 1.08, letterSpacing: '-0.035em', marginBottom: 22, maxWidth: 680 }}>
-          Manage projects.{' '}<span style={{ color: c.accent }}>Ship faster.</span>
+        <h1 style={{ fontSize:'clamp(40px,6.5vw,80px)', fontWeight:300, lineHeight:1.06, letterSpacing:'-0.04em', marginBottom:24, maxWidth:720, animation:'fadeSlideUp 0.5s ease 0.1s both' }}>
+          Manage projects.<br />
+          <span style={{ fontWeight:600, background:'linear-gradient(135deg,#60A5FA 0%,#A78BFA 100%)', WebkitBackgroundClip:'text', backgroundClip:'text', WebkitTextFillColor:'transparent', color:'transparent' }}>
+            Ship faster.
+          </span>
         </h1>
-        <p style={{ fontSize: 18, color: c.textSecondary, marginBottom: 40, maxWidth: 460, lineHeight: 1.7 }}>
+        <p style={{ fontSize:'clamp(15px,2vw,19px)', color:c.textSecondary, marginBottom:44, maxWidth:480, lineHeight:1.72, animation:'fadeSlideUp 0.5s ease 0.2s both' }}>
           The project management tool built for engineering teams who value clarity over complexity.
         </p>
-        <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', justifyContent: 'center' }}>
-          <Btn variant="primary" size="lg" onClick={() => navigate('register')}>Get Started free <Icon name="arrowUR" size={15} color="white" /></Btn>
-          <Btn variant="ghost"   size="lg" onClick={() => navigate('login')}>Sign in</Btn>
+        <div style={{ display:'flex', gap:14, flexWrap:'wrap', justifyContent:'center', animation:'fadeSlideUp 0.5s ease 0.3s both' }}>
+          <Btn variant="primary" size="lg" onClick={()=>navigate('register')}>Get Started free <Icon name="arrowUR" size={15} color="currentColor" /></Btn>
+          <Btn variant="ghost"   size="lg" onClick={()=>navigate('login')}>Sign in</Btn>
         </div>
-        <div style={{ marginTop: 52, display: 'flex', alignItems: 'center', gap: 12, color: c.textSecondary, fontSize: 13 }}>
-          <div style={{ display: 'flex' }}>
-            {AVATARS.map((av, i) => (
-              <div key={i} style={{ width: 28, height: 28, borderRadius: '50%', background: `hsl(${av.hue}deg 55% 38%)`, border: `2px solid ${c.bg}`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 9, fontWeight: 700, color: 'white', marginLeft: i > 0 ? -10 : 0, position: 'relative', zIndex: 4 - i }}>{av.init}</div>
+        <div style={{ marginTop:56, display:'flex', alignItems:'center', gap:14, color:c.textSecondary, fontSize:13, animation:'fadeSlideUp 0.5s ease 0.4s both', flexWrap:'wrap', justifyContent:'center' }}>
+          <div style={{ display:'flex' }}>
+            {AVATARS.map((av,i)=>(
+              <div key={i} style={{ width:30, height:30, borderRadius:'50%', background:`${av.col}33`, border:`2px solid ${av.col}55`, display:'flex', alignItems:'center', justifyContent:'center', fontSize:10, fontWeight:700, color:av.col, marginLeft:i>0?-11:0, position:'relative', zIndex:4-i }}>{av.init}</div>
             ))}
           </div>
-          <span>Trusted by <strong style={{ color: c.textPrimary, fontWeight: 600 }}>500+</strong> engineers</span>
+          <span>Trusted by <strong style={{ color:c.textPrimary }}>500+</strong> engineers</span>
         </div>
       </section>
 
-      <section style={{ position: 'relative', zIndex: 1, padding: '0 40px 80px', maxWidth: 1100, margin: '0 auto', width: '100%' }}>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 14 }}>
-          {FEATURES.map((f, i) => <FeatureCard key={i} feat={f} />)}
+      <section style={{ padding:'0 clamp(20px,4vw,48px) 100px', maxWidth:1140, margin:'0 auto', width:'100%' }}>
+        <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fit,minmax(260px,1fr))', gap:16 }}>
+          {FEATURES.map((f,i)=><FeatureCard key={i} feat={f} idx={i} />)}
         </div>
       </section>
 
-      <footer style={{ position: 'relative', zIndex: 1, borderTop: `1px solid ${c.border}`, padding: '18px 40px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+      <footer style={{ borderTop:'1px solid rgba(255,255,255,0.07)', padding:'20px clamp(20px,4vw,48px)', display:'flex', alignItems:'center', justifyContent:'space-between', flexWrap:'wrap', gap:12, backdropFilter:'blur(12px)', WebkitBackdropFilter:'blur(12px)', background:'rgba(13,13,26,0.3)' }}>
         <Logo size="sm" />
-        <span style={{ fontSize: 12, color: c.textSecondary }}>© 2026 ProjectCamp. All rights reserved.</span>
+        <span style={{ fontSize:12, color:c.textSecondary }}>© 2026 ProjectCamp · All rights reserved.</span>
       </footer>
     </div>
   );
 }
 
-/* ── AUTH PAGES ── */
+/* ─────────────────────────────────────────
+   AUTH PAGES
+───────────────────────────────────────── */
 function AuthLayout({ children }) {
-  const c = useC();
   return (
-    <div style={{ minHeight: '100%', background: c.bg, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 20, position: 'relative' }}>
-      <div style={{ position: 'fixed', inset: 0, backgroundImage: 'radial-gradient(circle, rgba(240,240,255,0.04) 1px, transparent 1px)', backgroundSize: '28px 28px', pointerEvents: 'none' }} />
-      <div style={{ position: 'fixed', top: -200, left: '50%', transform: 'translateX(-50%)', width: 600, height: 600, background: 'radial-gradient(circle, rgba(99,102,241,0.09) 0%, transparent 68%)', pointerEvents: 'none' }} />
-      <div style={{ position: 'relative', zIndex: 1, width: '100%', maxWidth: 420, animation: 'fadeSlideUp 0.3s ease both' }}>{children}</div>
+    <div style={{ minHeight:'100%', position:'relative', zIndex:1, display:'flex', alignItems:'center', justifyContent:'center', padding:'20px 16px' }}>
+      <div style={{ width:'100%', maxWidth:420, animation:'fadeSlideUp 0.3s ease' }}>{children}</div>
     </div>
   );
 }
 
 function ErrorAlert({ msg }) {
-  const c = useC();
   if (!msg) return null;
   return (
-    <div style={{ background: 'rgba(239,68,68,0.08)', border: '1px solid rgba(239,68,68,0.25)', borderRadius: 6, padding: '9px 12px', marginBottom: 16, fontSize: 13, color: c.danger, display: 'flex', alignItems: 'center', gap: 8 }}>
-      <Icon name="x" size={13} color={c.danger} />{msg}
+    <div style={{ background:'rgba(255,107,107,0.08)', border:'1px solid rgba(255,107,107,0.25)', borderRadius:8, padding:'9px 13px', marginBottom:16, fontSize:13, color:'#FF6B6B', display:'flex', alignItems:'center', gap:8 }}>
+      <Icon name="x" size={13} color="#FF6B6B"/>{msg}
     </div>
   );
 }
@@ -528,42 +706,42 @@ function LoginPage({ navigate, onLogin }) {
   const [error, setError]       = React.useState('');
 
   const submit = async () => {
-    if (!email || !password) { setError('Please fill in all fields.'); return; }
+    if (!email||!password) { setError('Please fill in all fields.'); return; }
     setError(''); setLoading(true);
     try {
       const data = await api('POST', '/auth/login', { email, password });
       onLogin(toUserShape(data.user));
-    } catch (e) {
+    } catch(e) {
       setError(e.message || 'Login failed. Check your credentials.');
-    } finally {
-      setLoading(false);
-    }
+    } finally { setLoading(false); }
   };
 
   return (
     <AuthLayout>
-      <div style={{ background: c.surface, border: `1px solid ${c.border}`, borderRadius: 8, padding: 32 }}>
-        <div style={{ textAlign: 'center', marginBottom: 28 }}>
-          <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 20 }}><Logo size="md" /></div>
-          <h1 style={{ fontSize: 20, fontWeight: 500, color: c.textPrimary, letterSpacing: '-0.02em', marginBottom: 6 }}>Welcome back</h1>
-          <p style={{ fontSize: 13, color: c.textSecondary }}>Sign in to continue to your workspace.</p>
+      <div style={{ ...GLASS.deep, borderRadius:20, padding:'clamp(24px,4vw,36px)', position:'relative', overflow:'hidden' }}>
+        <div style={{ position:'absolute', top:0, left:'10%', right:'10%', height:1, background:'linear-gradient(90deg,transparent,rgba(255,255,255,0.6),transparent)', pointerEvents:'none', zIndex:2 }} />
+        <div style={{ textAlign:'center', marginBottom:28 }}>
+          <div style={{ display:'flex', justifyContent:'center', marginBottom:20 }}><Logo size="md" /></div>
+          <h1 style={{ fontSize:22, fontWeight:600, color:c.textPrimary, letterSpacing:'-0.02em', marginBottom:7 }}>Welcome back</h1>
+          <p style={{ fontSize:13, color:c.textSecondary }}>Sign in to continue to your workspace.</p>
         </div>
         <ErrorAlert msg={error} />
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+        <div style={{ display:'flex', flexDirection:'column', gap:14 }}>
           <FormInput label="Email" type="email" value={email} onChange={setEmail} placeholder="you@company.com" />
           <div>
-            <FormInput label="Password" type="password" value={password} onChange={setPassword} placeholder="••••••••" onKeyDown={e => e.key === 'Enter' && submit()} />
-            <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: 6 }}>
-              <button style={{ background: 'none', border: 'none', cursor: 'pointer', color: c.accent, fontSize: 12, padding: 0 }}>Forgot password?</button>
+            <FormInput label="Password" type="password" value={password} onChange={setPassword} placeholder="••••••••" onKeyDown={e=>e.key==='Enter'&&submit()} />
+            <div style={{ display:'flex', justifyContent:'flex-end', marginTop:7 }}>
+              <button style={{ background:'none', border:'none', cursor:'pointer', color:c.accent, fontSize:12, padding:0, fontFamily:'DM Sans,sans-serif' }}>Forgot password?</button>
             </div>
           </div>
-          <Btn variant="primary" fullWidth loading={loading} onClick={submit} style={{ marginTop: 4 }}>
-            {loading ? 'Signing in…' : 'Sign in'}
+          <Btn variant="primary" fullWidth loading={loading} onClick={submit} style={{ marginTop:4, justifyContent:'center' }}>
+            {loading?'Signing in…':'Sign in'}
           </Btn>
         </div>
-        <div style={{ marginTop: 24, paddingTop: 20, borderTop: `1px solid ${c.border}`, textAlign: 'center' }}>
-          <p style={{ fontSize: 13, color: c.textSecondary }}>Don't have an account?{' '}
-            <button onClick={() => navigate('register')} style={{ background: 'none', border: 'none', cursor: 'pointer', color: c.accent, fontSize: 13, fontWeight: 500, padding: 0 }}>Create one</button>
+        <div style={{ marginTop:24, paddingTop:20, borderTop:'1px solid rgba(255,255,255,0.08)', textAlign:'center' }}>
+          <p style={{ fontSize:13, color:c.textSecondary }}>
+            Don't have an account?{' '}
+            <button onClick={()=>navigate('register')} style={{ background:'none', border:'none', cursor:'pointer', color:c.accent, fontSize:13, fontWeight:500, padding:0, fontFamily:'DM Sans,sans-serif' }}>Create one</button>
           </p>
         </div>
       </div>
@@ -573,51 +751,51 @@ function LoginPage({ navigate, onLogin }) {
 
 function RegisterPage({ navigate, onLogin }) {
   const c = useC();
-  const [form, setForm]       = React.useState({ name: '', email: '', password: '' });
+  const [form, setForm]       = React.useState({ name:'', username:'', email:'', password:'' });
   const [loading, setLoading] = React.useState(false);
   const [error, setError]     = React.useState('');
-  const set = (k, v) => setForm(f => ({ ...f, [k]: v }));
+  const set = (k,v) => setForm(f=>({...f,[k]:v}));
 
   const submit = async () => {
-    if (!form.name || !form.username || !form.email || !form.password) { setError('Please fill in all fields.'); return; }
-    if (form.password.length < 8) { setError('Password must be at least 8 characters.'); return; }
+    if (!form.name||!form.username||!form.email||!form.password) { setError('Please fill in all fields.'); return; }
+    if (form.password.length<8) { setError('Password must be at least 8 characters.'); return; }
     setError(''); setLoading(true);
     try {
-      await api('POST', '/auth/register', { fullName: form.name, username: form.username.toLowerCase(), email: form.email, password: form.password });
-      const data = await api('POST', '/auth/login', { email: form.email, password: form.password });
+      await api('POST', '/auth/register', { fullName:form.name, username:form.username.toLowerCase(), email:form.email, password:form.password });
+      const data = await api('POST', '/auth/login', { email:form.email, password:form.password });
       onLogin(toUserShape(data.user));
-    } catch (e) {
+    } catch(e) {
       setError(e.message || 'Registration failed. Please try again.');
-    } finally {
-      setLoading(false);
-    }
+    } finally { setLoading(false); }
   };
 
   return (
     <AuthLayout>
-      <div style={{ background: c.surface, border: `1px solid ${c.border}`, borderRadius: 8, padding: 32 }}>
-        <div style={{ textAlign: 'center', marginBottom: 28 }}>
-          <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 20 }}><Logo size="md" /></div>
-          <h1 style={{ fontSize: 20, fontWeight: 500, color: c.textPrimary, letterSpacing: '-0.02em', marginBottom: 6 }}>Create your account</h1>
-          <p style={{ fontSize: 13, color: c.textSecondary }}>Start managing projects with your team.</p>
+      <div style={{ ...GLASS.deep, borderRadius:20, padding:'clamp(24px,4vw,36px)', position:'relative', overflow:'hidden' }}>
+        <div style={{ position:'absolute', top:0, left:'10%', right:'10%', height:1, background:'linear-gradient(90deg,transparent,rgba(255,255,255,0.6),transparent)', pointerEvents:'none', zIndex:2 }} />
+        <div style={{ textAlign:'center', marginBottom:28 }}>
+          <div style={{ display:'flex', justifyContent:'center', marginBottom:20 }}><Logo size="md" /></div>
+          <h1 style={{ fontSize:22, fontWeight:600, color:c.textPrimary, letterSpacing:'-0.02em', marginBottom:7 }}>Create your account</h1>
+          <p style={{ fontSize:13, color:c.textSecondary }}>Start managing projects with your team.</p>
         </div>
         <ErrorAlert msg={error} />
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
-          <FormInput label="Full name" value={form.name} onChange={v => set('name', v)} placeholder="Alex Morgan" />
-          <FormInput label="Username" value={form.username || ''} onChange={v => set('username', v)} placeholder="alexmorgan" />
-          <FormInput label="Email" type="email" value={form.email} onChange={v => set('email', v)} placeholder="you@company.com" />
-          <FormInput label="Password" type="password" value={form.password} onChange={v => set('password', v)} placeholder="At least 8 characters" onKeyDown={e => e.key === 'Enter' && submit()} />
-          <div style={{ background: c.surface2, borderRadius: 6, padding: '10px 12px', display: 'flex', gap: 8, marginTop: 2 }}>
-            <Icon name="lock" size={13} color={c.textSecondary} />
-            <span style={{ fontSize: 12, color: c.textSecondary, lineHeight: 1.5 }}>Your data is encrypted and never shared with third parties.</span>
+        <div style={{ display:'flex', flexDirection:'column', gap:14 }}>
+          <FormInput label="Full name"    value={form.name}     onChange={v=>set('name',v)}     placeholder="Alex Morgan" />
+          <FormInput label="Username"     value={form.username} onChange={v=>set('username',v)} placeholder="alexmorgan" />
+          <FormInput label="Email"        type="email" value={form.email}    onChange={v=>set('email',v)}    placeholder="you@company.com" />
+          <FormInput label="Password"     type="password" value={form.password} onChange={v=>set('password',v)} placeholder="At least 8 characters" onKeyDown={e=>e.key==='Enter'&&submit()} />
+          <div style={{ background:'rgba(96,165,250,0.06)', border:'1px solid rgba(96,165,250,0.15)', borderRadius:8, padding:'10px 13px', display:'flex', gap:8 }}>
+            <Icon name="lock" size={13} color="rgba(96,165,250,0.6)" />
+            <span style={{ fontSize:12, color:c.textSecondary, lineHeight:1.55 }}>Your data is encrypted and never shared.</span>
           </div>
-          <Btn variant="primary" fullWidth loading={loading} onClick={submit} style={{ marginTop: 4 }}>
-            {loading ? 'Creating account…' : 'Create account'}
+          <Btn variant="primary" fullWidth loading={loading} onClick={submit} style={{ marginTop:4, justifyContent:'center' }}>
+            {loading?'Creating account…':'Create account'}
           </Btn>
         </div>
-        <div style={{ marginTop: 24, paddingTop: 20, borderTop: `1px solid ${c.border}`, textAlign: 'center' }}>
-          <p style={{ fontSize: 13, color: c.textSecondary }}>Already have an account?{' '}
-            <button onClick={() => navigate('login')} style={{ background: 'none', border: 'none', cursor: 'pointer', color: c.accent, fontSize: 13, fontWeight: 500, padding: 0 }}>Sign in</button>
+        <div style={{ marginTop:24, paddingTop:20, borderTop:'1px solid rgba(255,255,255,0.08)', textAlign:'center' }}>
+          <p style={{ fontSize:13, color:c.textSecondary }}>
+            Already have an account?{' '}
+            <button onClick={()=>navigate('login')} style={{ background:'none', border:'none', cursor:'pointer', color:c.accent, fontSize:13, fontWeight:500, padding:0, fontFamily:'DM Sans,sans-serif' }}>Sign in</button>
           </p>
         </div>
       </div>
@@ -625,112 +803,126 @@ function RegisterPage({ navigate, onLogin }) {
   );
 }
 
-/* ── DASHBOARD ── */
-function StatCard({ icon, label, value, color }) {
+/* ─────────────────────────────────────────
+   DASHBOARD
+───────────────────────────────────────── */
+function StatCard({ icon, label, value, color, idx }) {
   const c = useC();
   const [hov, setHov] = React.useState(false);
   return (
-    <div onMouseEnter={() => setHov(true)} onMouseLeave={() => setHov(false)}
-      style={{ background: c.surface, border: `1px solid ${hov ? c.borderHover : c.border}`, borderRadius: 8, padding: 20, display: 'flex', flexDirection: 'column', gap: 14, transition: 'border-color 0.15s', position: 'relative', overflow: 'hidden', cursor: 'default' }}>
-      <div style={{ position: 'absolute', top: 14, right: 16, opacity: 0.18 }}><Icon name={icon} size={22} color={color} /></div>
+    <div onMouseEnter={()=>setHov(true)} onMouseLeave={()=>setHov(false)}
+      style={{ ...(hov?GLASS.lifted:GLASS.surface), borderRadius:14, padding:20, display:'flex', flexDirection:'column', gap:14, transition:'all 0.22s cubic-bezier(0.34,1.56,0.64,1)', transform:hov?'translateY(-3px)':'translateY(0)', position:'relative', overflow:'hidden', cursor:'default', animation:`cardReveal 0.45s ease ${idx*0.08}s both` }}>
+      <div style={{ position:'absolute', top:14, right:16, opacity:0.2 }}><Icon name={icon} size={22} color={color} /></div>
       <div>
-        <div style={{ fontSize: 34, fontWeight: 600, color, lineHeight: 1, letterSpacing: '-0.03em' }}>{value}</div>
-        <div style={{ fontSize: 12, color: c.textSecondary, marginTop: 5 }}>{label}</div>
+        <div style={{ fontSize:34, fontWeight:600, color, lineHeight:1, letterSpacing:'-0.03em', fontFamily:'Sora,sans-serif', textShadow:`0 0 30px ${color}55` }}>{value}</div>
+        <div style={{ fontSize:12, color:c.textSecondary, marginTop:6 }}>{label}</div>
       </div>
-      <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: 2, background: `linear-gradient(90deg, ${color}50, transparent)`, opacity: hov ? 1 : 0, transition: 'opacity 0.2s' }} />
+      <div style={{ position:'absolute', bottom:0, left:0, right:0, height:2, background:`linear-gradient(90deg,${color}60,transparent)`, opacity:hov?1:0, transition:'opacity 0.2s' }} />
     </div>
   );
 }
 
 function DashboardPage({ projects, navigate, user }) {
   const c = useC();
-  const stats = React.useMemo(() => ({
-    total:      projects.length,
-    inProgress: projects.filter(p => p.status === 'in_progress').length,
-    completed:  projects.filter(p => p.status === 'done').length,
-    todo:       projects.filter(p => p.status === 'todo').length,
-  }), [projects]);
-
-  const recent = React.useMemo(() => projects.slice(0, 5), [projects]);
-  const greeting = (() => { const h = new Date().getHours(); return h < 12 ? 'Good morning' : h < 18 ? 'Good afternoon' : 'Good evening'; })();
+  const mobile = useMobile();
+  const stats = React.useMemo(()=>({ total:projects.length, inProgress:projects.filter(p=>p.status==='in_progress').length, completed:projects.filter(p=>p.status==='done').length, todo:projects.filter(p=>p.status==='todo').length }), [projects]);
+  const recent = React.useMemo(()=>projects.slice(0,5), [projects]);
+  const greeting = (() => { const h=new Date().getHours(); return h<12?'Good morning':h<18?'Good afternoon':'Good evening'; })();
 
   return (
-    <div style={{ padding: 32, maxWidth: 1160, margin: '0 auto' }}>
-      <div style={{ marginBottom: 28 }}>
-        <h1 style={{ fontSize: 24, fontWeight: 500, color: c.textPrimary, letterSpacing: '-0.025em', marginBottom: 4 }}>{greeting}, {user.name.split(' ')[0]} 👋</h1>
-        <p style={{ fontSize: 13, color: c.textSecondary }}>{stats.inProgress} active · {stats.todo} todo · {stats.completed} completed</p>
+    <div style={{ padding:mobile?'20px 16px 90px':'36px', maxWidth:1160, margin:'0 auto' }}>
+      <div style={{ marginBottom:28 }}>
+        <h1 style={{ fontSize:mobile?22:26, fontWeight:600, color:c.textPrimary, letterSpacing:'-0.025em', marginBottom:5 }}>{greeting}, {user.name.split(' ')[0]} 👋</h1>
+        <p style={{ fontSize:13, color:c.textSecondary }}>{stats.inProgress} active · {stats.todo} todo · {stats.completed} completed</p>
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 14, marginBottom: 28 }}>
-        <StatCard icon="folder"   label="Total Projects" value={stats.total}      color={c.accent} />
-        <StatCard icon="activity" label="In Progress"    value={stats.inProgress} color="#818CF8" />
-        <StatCard icon="check"    label="Completed"      value={stats.completed}  color={c.success} />
-        <StatCard icon="clock"    label="Todo"           value={stats.todo}       color={c.textSecondary} />
+      <div style={{ display:'grid', gridTemplateColumns:mobile?'repeat(2,1fr)':'repeat(4,1fr)', gap:12, marginBottom:18 }}>
+        <StatCard icon="folder"   label="Total"      value={stats.total}       color={c.accent}                idx={0} />
+        <StatCard icon="activity" label="Active"     value={stats.inProgress}  color="#A78BFA"                 idx={1} />
+        <StatCard icon="check"    label="Completed"  value={stats.completed}   color={c.success}               idx={2} />
+        <StatCard icon="clock"    label="Todo"       value={stats.todo}        color="rgba(248,248,255,0.45)"  idx={3} />
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 260px', gap: 14, alignItems: 'start' }}>
-        <div style={{ background: c.surface, border: `1px solid ${c.border}`, borderRadius: 8, overflow: 'hidden' }}>
-          <div style={{ padding: '14px 20px', borderBottom: `1px solid ${c.border}`, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-            <h2 style={{ fontSize: 14, fontWeight: 500, color: c.textPrimary }}>Recent Projects</h2>
-            <button onClick={() => navigate('projects')} style={{ background: 'none', border: 'none', cursor: 'pointer', color: c.accent, fontSize: 12, display: 'flex', alignItems: 'center', gap: 4, fontFamily: 'Inter, sans-serif', padding: 0 }}>
+      <div style={{ display:'grid', gridTemplateColumns:mobile?'1fr':'1fr 270px', gap:14, alignItems:'start' }}>
+        <div style={{ ...GLASS.surface, borderRadius:14, overflow:'hidden', position:'relative' }}>
+          <div style={{ position:'absolute', top:0, left:'5%', right:'5%', height:1, background:'linear-gradient(90deg,transparent,rgba(255,255,255,0.4),transparent)', pointerEvents:'none', zIndex:1 }} />
+          <div style={{ padding:'15px 20px', borderBottom:'1px solid rgba(255,255,255,0.08)', display:'flex', alignItems:'center', justifyContent:'space-between' }}>
+            <h2 style={{ fontSize:14, fontWeight:600, color:c.textPrimary }}>Recent Projects</h2>
+            <button onClick={()=>navigate('projects')} style={{ background:'none', border:'none', cursor:'pointer', color:c.accent, fontSize:12, display:'flex', alignItems:'center', gap:4, fontFamily:'DM Sans,sans-serif', padding:0 }}>
               View all <Icon name="arrowUR" size={11} color={c.accent} />
             </button>
           </div>
-          <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-            <thead>
-              <tr>{['Name', 'Status', 'Priority', 'Updated'].map(col => (
-                <th key={col} style={{ padding: '8px 20px', textAlign: 'left', fontSize: 11, fontWeight: 500, color: c.textSecondary, letterSpacing: '0.06em', textTransform: 'uppercase', borderBottom: `1px solid ${c.border}` }}>{col}</th>
-              ))}</tr>
-            </thead>
-            <tbody>
-              {recent.map(proj => {
-                const [hov, setHov] = [false, () => {}];
-                return (
-                  <tr key={proj.id} onClick={() => navigate('projects')} style={{ cursor: 'pointer', transition: 'background 0.1s' }}
-                    onMouseEnter={e => e.currentTarget.style.background = c.surface2}
-                    onMouseLeave={e => e.currentTarget.style.background = 'transparent'}>
-                    <td style={{ padding: '11px 20px', borderBottom: `1px solid ${c.border}` }}><span style={{ fontSize: 14, fontWeight: 500, color: c.textPrimary }}>{proj.name}</span></td>
-                    <td style={{ padding: '11px 20px', borderBottom: `1px solid ${c.border}` }}><StatusBadge status={proj.status} /></td>
-                    <td style={{ padding: '11px 20px', borderBottom: `1px solid ${c.border}` }}><PriorityBadge priority={proj.priority} /></td>
-                    <td style={{ padding: '11px 20px', borderBottom: `1px solid ${c.border}` }}><span style={{ fontSize: 12, color: c.textSecondary, fontFamily: 'JetBrains Mono, monospace' }}>{proj.updatedAt}</span></td>
+          {mobile ? (
+            <div style={{ padding:'8px 0' }}>
+              {recent.map(proj=>(
+                <div key={proj.id} onClick={()=>navigate('projects')} style={{ padding:'12px 16px', borderBottom:'1px solid rgba(255,255,255,0.06)', display:'flex', alignItems:'center', justifyContent:'space-between', cursor:'pointer' }}>
+                  <div>
+                    <div style={{ fontSize:14, fontWeight:500, color:c.textPrimary, marginBottom:4 }}>{proj.name}</div>
+                    <StatusBadge status={proj.status} />
+                  </div>
+                  <span style={{ fontSize:11, color:c.textSecondary, fontFamily:'JetBrains Mono,monospace' }}>{proj.updatedAt}</span>
+                </div>
+              ))}
+              {!recent.length&&<div style={{ padding:'24px 16px', textAlign:'center', color:c.textSecondary, fontSize:13 }}>No projects yet</div>}
+            </div>
+          ) : (
+            <table style={{ width:'100%', borderCollapse:'collapse' }}>
+              <thead>
+                <tr>{['Name','Status','Priority','Updated'].map(col=><th key={col} style={{ padding:'8px 20px', textAlign:'left', fontSize:11, fontWeight:500, color:c.textSecondary, letterSpacing:'0.07em', textTransform:'uppercase', borderBottom:'1px solid rgba(255,255,255,0.06)' }}>{col}</th>)}</tr>
+              </thead>
+              <tbody>
+                {recent.map(proj=>(
+                  <tr key={proj.id} onClick={()=>navigate('projects')} style={{ cursor:'pointer', transition:'background 0.1s' }}
+                    onMouseEnter={e=>e.currentTarget.style.background='rgba(255,255,255,0.04)'}
+                    onMouseLeave={e=>e.currentTarget.style.background='transparent'}>
+                    <td style={{ padding:'12px 20px', borderBottom:'1px solid rgba(255,255,255,0.06)' }}><span style={{ fontSize:14, fontWeight:500, color:c.textPrimary }}>{proj.name}</span></td>
+                    <td style={{ padding:'12px 20px', borderBottom:'1px solid rgba(255,255,255,0.06)' }}><StatusBadge status={proj.status} /></td>
+                    <td style={{ padding:'12px 20px', borderBottom:'1px solid rgba(255,255,255,0.06)' }}><PriorityBadge priority={proj.priority||'medium'} /></td>
+                    <td style={{ padding:'12px 20px', borderBottom:'1px solid rgba(255,255,255,0.06)' }}><span style={{ fontSize:12, color:c.textSecondary, fontFamily:'JetBrains Mono,monospace' }}>{proj.updatedAt}</span></td>
                   </tr>
-                );
-              })}
-            </tbody>
-          </table>
+                ))}
+                {!recent.length&&<tr><td colSpan={4} style={{ padding:'32px 20px', textAlign:'center', color:c.textSecondary, fontSize:13 }}>No projects yet — create your first one!</td></tr>}
+              </tbody>
+            </table>
+          )}
         </div>
 
-        <div style={{ background: c.surface, border: `1px solid ${c.border}`, borderRadius: 8, padding: 20 }}>
-          <h2 style={{ fontSize: 14, fontWeight: 500, color: c.textPrimary, marginBottom: 20 }}>Overview</h2>
-          <DonutChart projects={projects} />
-          <div style={{ marginTop: 20, paddingTop: 16, borderTop: `1px solid ${c.border}` }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <span style={{ fontSize: 12, color: c.textSecondary }}>Completion rate</span>
-              <span style={{ fontSize: 13, fontWeight: 600, color: c.success }}>{projects.length ? Math.round((stats.completed / projects.length) * 100) : 0}%</span>
-            </div>
-            <div style={{ marginTop: 8, height: 4, background: c.surface2, borderRadius: 4, overflow: 'hidden' }}>
-              <div style={{ height: '100%', width: `${projects.length ? (stats.completed / projects.length) * 100 : 0}%`, background: c.success, borderRadius: 4, transition: 'width 0.5s ease' }} />
+        {!mobile&&(
+          <div style={{ ...GLASS.surface, borderRadius:14, padding:22, position:'relative', overflow:'hidden' }}>
+            <div style={{ position:'absolute', top:0, left:'10%', right:'10%', height:1, background:'linear-gradient(90deg,transparent,rgba(255,255,255,0.4),transparent)', pointerEvents:'none' }} />
+            <h2 style={{ fontSize:14, fontWeight:600, color:c.textPrimary, marginBottom:22 }}>Overview</h2>
+            <DonutChart projects={projects} />
+            <div style={{ marginTop:20, paddingTop:16, borderTop:'1px solid rgba(255,255,255,0.08)' }}>
+              <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center' }}>
+                <span style={{ fontSize:12, color:c.textSecondary }}>Completion rate</span>
+                <span style={{ fontSize:13, fontWeight:600, color:c.success }}>{projects.length?Math.round((stats.completed/projects.length)*100):0}%</span>
+              </div>
+              <div style={{ marginTop:8, height:4, background:'rgba(255,255,255,0.08)', borderRadius:4, overflow:'hidden' }}>
+                <div style={{ height:'100%', width:`${projects.length?(stats.completed/projects.length)*100:0}%`, background:`linear-gradient(90deg,${c.accent},#A8FF78)`, borderRadius:4, transition:'width 0.6s ease' }} />
+              </div>
             </div>
           </div>
-        </div>
+        )}
       </div>
     </div>
   );
 }
 
-/* ── PROJECTS PAGE ── */
-const STATUS_OPTS   = [{ value: 'todo', label: 'Todo' }, { value: 'in_progress', label: 'In Progress' }, { value: 'done', label: 'Done' }];
-const PRIORITY_OPTS = [{ value: 'low', label: 'Low' }, { value: 'medium', label: 'Medium' }, { value: 'high', label: 'High' }];
-const FILTER_TABS   = [{ id: 'all', label: 'All' }, { id: 'todo', label: 'Todo' }, { id: 'in_progress', label: 'In Progress' }, { id: 'done', label: 'Done' }];
+/* ─────────────────────────────────────────
+   PROJECTS PAGE
+───────────────────────────────────────── */
+const STATUS_OPTS   = [{value:'todo',label:'Todo'},{value:'in_progress',label:'In Progress'},{value:'done',label:'Done'}];
+const PRIORITY_OPTS = [{value:'low',label:'Low'},{value:'medium',label:'Medium'},{value:'high',label:'High'}];
+const FILTER_TABS   = [{id:'all',label:'All'},{id:'todo',label:'Todo'},{id:'in_progress',label:'Active'},{id:'done',label:'Done'}];
 
 function FilterPill({ tab, active, onClick, count }) {
   const c = useC();
   const [hov, setHov] = React.useState(false);
   return (
-    <button onClick={onClick} onMouseEnter={() => setHov(true)} onMouseLeave={() => setHov(false)}
-      style={{ background: active ? c.accent : c.surface2, color: active ? '#fff' : (hov ? c.textPrimary : c.textSecondary), border: `1px solid ${active ? c.accent : c.border}`, borderRadius: 6, padding: '6px 13px', fontSize: 13, fontWeight: active ? 500 : 400, cursor: 'pointer', transition: 'all 0.15s', display: 'flex', alignItems: 'center', gap: 7, fontFamily: 'Inter, sans-serif', letterSpacing: '-0.01em' }}>
+    <button onClick={onClick} onMouseEnter={()=>setHov(true)} onMouseLeave={()=>setHov(false)}
+      style={{ ...(active?{...GLASS.lifted,background:'rgba(96,165,250,0.12)',border:'1px solid rgba(96,165,250,0.45)'}:GLASS.surface), color:active?c.accent:(hov?c.textPrimary:c.textSecondary), borderRadius:8, padding:'7px 12px', fontSize:13, fontWeight:active?500:400, cursor:'pointer', transition:'all 0.2s cubic-bezier(0.34,1.56,0.64,1)', display:'flex', alignItems:'center', gap:6, fontFamily:'DM Sans,sans-serif', whiteSpace:'nowrap' }}>
       {tab.label}
-      <span style={{ fontSize: 11, background: active ? 'rgba(255,255,255,0.18)' : c.border, color: active ? 'rgba(255,255,255,0.85)' : c.textSecondary, borderRadius: 10, padding: '1px 6px', fontWeight: 500 }}>{count}</span>
+      <span style={{ fontSize:11, background:'rgba(255,255,255,0.1)', color:active?c.accent:c.textSecondary, borderRadius:10, padding:'1px 7px', fontWeight:500 }}>{count}</span>
     </button>
   );
 }
@@ -739,45 +931,46 @@ function IconBtn({ icon, onClick, title, danger }) {
   const c = useC();
   const [hov, setHov] = React.useState(false);
   return (
-    <button onClick={e => { e.stopPropagation(); onClick(); }} onMouseEnter={() => setHov(true)} onMouseLeave={() => setHov(false)} title={title}
-      style={{ background: hov ? (danger ? 'rgba(239,68,68,0.1)' : c.accentGlow) : 'transparent', border: 'none', cursor: 'pointer', color: hov ? (danger ? c.danger : c.accent) : c.textSecondary, padding: 5, borderRadius: 4, display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'all 0.15s' }}>
-      <Icon name={icon} size={13} color={hov ? (danger ? c.danger : c.accent) : c.textSecondary} />
+    <button onClick={e=>{e.stopPropagation();onClick();}} onMouseEnter={()=>setHov(true)} onMouseLeave={()=>setHov(false)} title={title}
+      style={{ background:hov?(danger?'rgba(255,107,107,0.12)':'rgba(96,165,250,0.1)'):'transparent', border:'none', cursor:'pointer', color:hov?(danger?c.danger:c.accent):c.textSecondary, padding:6, borderRadius:6, display:'flex', alignItems:'center', justifyContent:'center', transition:'all 0.15s' }}>
+      <Icon name={icon} size={13} color={hov?(danger?c.danger:c.accent):c.textSecondary} />
     </button>
   );
 }
 
-function ProjectCard({ project, onEdit, onDelete }) {
+function ProjectCard({ project, onEdit, onDelete, idx }) {
   const c = useC();
   const [hov, setHov] = React.useState(false);
-  const pct = project.tasks > 0 ? Math.round((project.completed / project.tasks) * 100) : 0;
+  const pct = project.tasks>0?Math.round((project.completed/project.tasks)*100):0;
   return (
-    <div onMouseEnter={() => setHov(true)} onMouseLeave={() => setHov(false)}
-      style={{ background: c.surface, border: `1px solid ${hov ? c.borderHover : c.border}`, borderRadius: 8, padding: 20, display: 'flex', flexDirection: 'column', gap: 12, transition: 'border-color 0.15s, transform 0.15s', transform: hov ? 'translateY(-2px)' : 'none', position: 'relative' }}>
-      <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 8 }}>
-        <h3 style={{ fontSize: 15, fontWeight: 500, color: c.textPrimary, lineHeight: 1.4, flex: 1, letterSpacing: '-0.015em' }}>{project.name}</h3>
-        <div style={{ display: 'flex', gap: 2, opacity: hov ? 1 : 0, transition: 'opacity 0.15s', flexShrink: 0, marginTop: 1 }}>
-          <IconBtn icon="edit"  onClick={onEdit}   title="Edit project" />
-          <IconBtn icon="trash" onClick={onDelete} title="Delete project" danger />
+    <div onMouseEnter={()=>setHov(true)} onMouseLeave={()=>setHov(false)}
+      style={{ ...(hov?GLASS.lifted:GLASS.surface), borderRadius:14, padding:20, display:'flex', flexDirection:'column', gap:12, transition:'all 0.25s cubic-bezier(0.34,1.56,0.64,1)', transform:hov?'translateY(-4px)':'translateY(0)', position:'relative', overflow:'hidden', animation:`cardReveal 0.45s ease ${(idx||0)*0.06}s both` }}>
+      <div style={{ position:'absolute', top:0, left:0, right:0, height:1, background:'linear-gradient(90deg,transparent,rgba(255,255,255,0.12),transparent)', pointerEvents:'none' }} />
+      <div style={{ display:'flex', alignItems:'flex-start', justifyContent:'space-between', gap:8 }}>
+        <h3 style={{ fontSize:15, fontWeight:600, color:c.textPrimary, lineHeight:1.4, flex:1, fontFamily:'Sora,sans-serif' }}>{project.name}</h3>
+        <div style={{ display:'flex', gap:2, opacity:hov?1:0, transition:'opacity 0.15s', flexShrink:0 }}>
+          <IconBtn icon="edit"  onClick={onEdit}   title="Edit" />
+          <IconBtn icon="trash" onClick={onDelete} title="Delete" danger />
         </div>
       </div>
-      <p style={{ fontSize: 13, color: c.textSecondary, lineHeight: 1.65, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>{project.description}</p>
-      <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
+      <p style={{ fontSize:13, color:c.textSecondary, lineHeight:1.7, display:'-webkit-box', WebkitLineClamp:2, WebkitBoxOrient:'vertical', overflow:'hidden' }}>{project.description||'No description.'}</p>
+      <div style={{ display:'flex', gap:6, flexWrap:'wrap' }}>
         <StatusBadge status={project.status} />
-        <PriorityBadge priority={project.priority} />
+        <PriorityBadge priority={project.priority||'medium'} />
       </div>
-      {project.tasks > 0 && (
+      {project.tasks>0&&(
         <div>
-          <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 5 }}>
-            <span style={{ fontSize: 11, color: c.textSecondary }}>{project.completed}/{project.tasks} tasks</span>
-            <span style={{ fontSize: 11, color: c.textSecondary }}>{pct}%</span>
+          <div style={{ display:'flex', justifyContent:'space-between', marginBottom:5 }}>
+            <span style={{ fontSize:11, color:c.textSecondary }}>{project.completed}/{project.tasks} tasks</span>
+            <span style={{ fontSize:11, color:c.textSecondary }}>{pct}%</span>
           </div>
-          <div style={{ height: 3, background: c.surface2, borderRadius: 4, overflow: 'hidden' }}>
-            <div style={{ height: '100%', width: `${pct}%`, background: project.status === 'done' ? c.success : c.accent, borderRadius: 4, transition: 'width 0.4s ease' }} />
+          <div style={{ height:3, background:'rgba(255,255,255,0.08)', borderRadius:4, overflow:'hidden' }}>
+            <div style={{ height:'100%', width:`${pct}%`, background:`linear-gradient(90deg,${c.accent},#A78BFA)`, borderRadius:4, transition:'width 0.5s ease' }} />
           </div>
         </div>
       )}
-      <div style={{ paddingTop: 4, borderTop: `1px solid ${c.border}`, display: 'flex', justifyContent: 'flex-end' }}>
-        <span style={{ fontSize: 11, color: c.textSecondary, fontFamily: 'JetBrains Mono, monospace' }}>Updated {project.updatedAt}</span>
+      <div style={{ paddingTop:5, borderTop:'1px solid rgba(255,255,255,0.07)', display:'flex', justifyContent:'flex-end' }}>
+        <span style={{ fontSize:11, color:c.textSecondary, fontFamily:'JetBrains Mono,monospace' }}>Updated {project.updatedAt||'—'}</span>
       </div>
     </div>
   );
@@ -785,45 +978,42 @@ function ProjectCard({ project, onEdit, onDelete }) {
 
 function ProjectModal({ mode, project, onSave, onClose }) {
   const c = useC();
-  const [form, setForm]       = React.useState({ name: project?.name || '', description: project?.description || '', status: project?.status || 'todo', priority: project?.priority || 'medium' });
+  const [form, setForm]       = React.useState({ name:project?.name||'', description:project?.description||'', status:project?.status||'todo', priority:project?.priority||'medium' });
   const [loading, setLoading] = React.useState(false);
   const [errors, setErrors]   = React.useState({});
-  const set = (k, v) => { setForm(f => ({ ...f, [k]: v })); setErrors(e => ({ ...e, [k]: null })); };
+  const set = (k,v)=>{ setForm(f=>({...f,[k]:v})); setErrors(e=>({...e,[k]:null})); };
 
   const handleSave = async () => {
-    const errs = {};
-    if (!form.name.trim()) errs.name = 'Project name is required.';
+    const errs={};
+    if (!form.name.trim()) errs.name='Project name is required.';
     if (Object.keys(errs).length) { setErrors(errs); return; }
     setLoading(true);
-    try {
-      await onSave(form);
-    } finally {
-      setLoading(false);
-    }
+    try { await onSave(form); } finally { setLoading(false); }
   };
 
   return (
-    <div onClick={e => e.target === e.currentTarget && onClose()}
-      style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.65)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 200, animation: 'fadeIn 0.15s ease', padding: 20 }}>
-      <div style={{ background: c.surface, border: `1px solid ${c.border}`, borderRadius: 8, width: '100%', maxWidth: 520, animation: 'fadeSlideUp 0.22s ease', overflow: 'hidden' }}>
-        <div style={{ padding: '18px 24px', borderBottom: `1px solid ${c.border}`, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-          <h2 style={{ fontSize: 15, fontWeight: 500, color: c.textPrimary, letterSpacing: '-0.01em' }}>{mode === 'new' ? 'New Project' : 'Edit Project'}</h2>
-          <button onClick={onClose} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 4, display: 'flex', borderRadius: 4 }}><Icon name="x" size={16} color={c.textSecondary} /></button>
+    <div onClick={e=>e.target===e.currentTarget&&onClose()}
+      style={{ position:'fixed', inset:0, background:'rgba(0,0,0,0.6)', backdropFilter:'blur(10px)', WebkitBackdropFilter:'blur(10px)', display:'flex', alignItems:'center', justifyContent:'center', zIndex:300, animation:'fadeIn 0.15s ease', padding:'20px 16px' }}>
+      <div style={{ ...GLASS.deep, borderRadius:20, width:'100%', maxWidth:530, animation:'fadeSlideUp 0.22s ease', overflow:'hidden', position:'relative' }}>
+        <div style={{ position:'absolute', top:0, left:'10%', right:'10%', height:1, background:'linear-gradient(90deg,transparent,rgba(255,255,255,0.55),transparent)', pointerEvents:'none', zIndex:2 }} />
+        <div style={{ padding:'20px 24px', borderBottom:'1px solid rgba(255,255,255,0.08)', display:'flex', alignItems:'center', justifyContent:'space-between' }}>
+          <h2 style={{ fontSize:16, fontWeight:600, color:c.textPrimary }}>{mode==='new'?'New Project':'Edit Project'}</h2>
+          <button onClick={onClose} style={{ background:'none', border:'none', cursor:'pointer', color:c.textSecondary, padding:4, borderRadius:6, display:'flex' }}><Icon name="x" size={16} color={c.textSecondary} /></button>
         </div>
-        <div style={{ padding: '22px 24px', display: 'flex', flexDirection: 'column', gap: 16 }}>
+        <div style={{ padding:'22px 24px', display:'flex', flexDirection:'column', gap:16 }}>
           <div>
-            <FormInput label="Project Name" value={form.name} onChange={v => set('name', v)} placeholder="e.g. E-commerce Redesign" autoFocus />
-            {errors.name && <p style={{ fontSize: 12, color: c.danger, marginTop: 5 }}>{errors.name}</p>}
+            <FormInput label="Project Name" value={form.name} onChange={v=>set('name',v)} placeholder="e.g. E-commerce Redesign" autoFocus />
+            {errors.name&&<p style={{ fontSize:12, color:c.danger, marginTop:5 }}>{errors.name}</p>}
           </div>
-          <FormTextarea label="Description" value={form.description} onChange={v => set('description', v)} placeholder="Brief description of the project scope and goals…" rows={3} />
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
-            <FormSelect label="Status"   value={form.status}   onChange={v => set('status', v)}   options={STATUS_OPTS} />
-            <FormSelect label="Priority" value={form.priority} onChange={v => set('priority', v)} options={PRIORITY_OPTS} />
+          <FormTextarea label="Description" value={form.description} onChange={v=>set('description',v)} placeholder="Brief description of the project scope and goals…" rows={3} />
+          <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:12 }}>
+            <FormSelect label="Status"   value={form.status}   onChange={v=>set('status',v)}   options={STATUS_OPTS} />
+            <FormSelect label="Priority" value={form.priority} onChange={v=>set('priority',v)} options={PRIORITY_OPTS} />
           </div>
         </div>
-        <div style={{ padding: '14px 24px', borderTop: `1px solid ${c.border}`, display: 'flex', justifyContent: 'flex-end', gap: 8 }}>
+        <div style={{ padding:'14px 24px', borderTop:'1px solid rgba(255,255,255,0.08)', display:'flex', justifyContent:'flex-end', gap:8 }}>
           <Btn variant="surface" onClick={onClose}>Cancel</Btn>
-          <Btn variant="primary" loading={loading} onClick={handleSave}>{loading ? 'Saving…' : mode === 'new' ? 'Create Project' : 'Save Changes'}</Btn>
+          <Btn variant="primary" loading={loading} onClick={handleSave}>{loading?'Saving…':mode==='new'?'Create Project':'Save Changes'}</Btn>
         </div>
       </div>
     </div>
@@ -832,166 +1022,165 @@ function ProjectModal({ mode, project, onSave, onClose }) {
 
 function ProjectsPage({ projects, setProjects }) {
   const c = useC();
-  const [filter, setFilter]   = React.useState('all');
-  const [search, setSearch]   = React.useState('');
-  const [modal, setModal]     = React.useState(null);
-  const [confirm, setConfirm] = React.useState(null);
+  const mobile = useMobile();
+  const [filter, setFilter]       = React.useState('all');
+  const [search, setSearch]       = React.useState('');
+  const [modal, setModal]         = React.useState(null);
+  const [confirm, setConfirm]     = React.useState(null);
   const [searchFoc, setSearchFoc] = React.useState(false);
-  const [apiErr, setApiErr]   = React.useState('');
-  // priority is UI-only (not in backend model) — stored by project _id
+  const [apiErr, setApiErr]       = React.useState('');
   const [priorities, setPriorities] = React.useState({});
 
   const getProjectPriority = id => priorities[id] || 'medium';
 
-  const filtered = React.useMemo(() =>
+  const filtered = React.useMemo(()=>
     projects
-      .filter(p => filter === 'all' || p.status === filter)
-      .filter(p => !search || p.name.toLowerCase().includes(search.toLowerCase()) || (p.description || '').toLowerCase().includes(search.toLowerCase())),
+      .filter(p=>filter==='all'||p.status===filter)
+      .filter(p=>!search||p.name.toLowerCase().includes(search.toLowerCase())||(p.description||'').toLowerCase().includes(search.toLowerCase())),
     [projects, filter, search]
   );
-
-  const getCount = id => id === 'all' ? projects.length : projects.filter(p => p.status === id).length;
+  const getCount = id => id==='all'?projects.length:projects.filter(p=>p.status===id).length;
 
   const handleSave = async data => {
     try {
-      if (modal.mode === 'new') {
-        const created = await api('POST', '/projects', { name: data.name, description: data.description, status: data.status });
+      if (modal.mode==='new') {
+        const created = await api('POST','/projects',{ name:data.name, description:data.description, status:data.status });
         const shaped = toProjectShape(created);
-        setProjects(prev => [shaped, ...prev]);
-        if (data.priority) setPriorities(prev => ({ ...prev, [shaped._id]: data.priority }));
+        setProjects(prev=>[shaped,...prev]);
+        if (data.priority) setPriorities(prev=>({...prev,[shaped._id]:data.priority}));
       } else {
-        const updated = await api('PUT', `/projects/${modal.project._id}`, { name: data.name, description: data.description, status: data.status });
+        const updated = await api('PUT',`/projects/${modal.project._id}`,{ name:data.name, description:data.description, status:data.status });
         const shaped = toProjectShape(updated);
-        setProjects(prev => prev.map(p => p._id === modal.project._id ? shaped : p));
-        if (data.priority) setPriorities(prev => ({ ...prev, [modal.project._id]: data.priority }));
+        setProjects(prev=>prev.map(p=>p._id===modal.project._id?shaped:p));
+        if (data.priority) setPriorities(prev=>({...prev,[modal.project._id]:data.priority}));
       }
       setModal(null);
-    } catch (e) {
-      setApiErr(e.message);
-    }
+    } catch(e) { setApiErr(e.message); }
   };
 
   const handleDelete = async id => {
     try {
-      await api('DELETE', `/projects/${id}`);
-      setProjects(prev => prev.filter(p => p._id !== id));
+      await api('DELETE',`/projects/${id}`);
+      setProjects(prev=>prev.filter(p=>p._id!==id));
       setConfirm(null);
-    } catch (e) {
-      setApiErr(e.message);
-      setConfirm(null);
-    }
+    } catch(e) { setApiErr(e.message); setConfirm(null); }
   };
 
   return (
-    <div style={{ padding: 32, maxWidth: 1160, margin: '0 auto' }}>
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 24 }}>
+    <div style={{ padding:mobile?'20px 16px 90px':'36px', maxWidth:1160, margin:'0 auto' }}>
+      <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:24, gap:12 }}>
         <div>
-          <h1 style={{ fontSize: 24, fontWeight: 500, color: c.textPrimary, letterSpacing: '-0.025em', marginBottom: 3 }}>My Projects</h1>
-          <p style={{ fontSize: 13, color: c.textSecondary }}>{projects.length} total · {projects.filter(p => p.status === 'in_progress').length} active</p>
+          <h1 style={{ fontSize:mobile?20:26, fontWeight:600, color:c.textPrimary, letterSpacing:'-0.025em', marginBottom:3 }}>My Projects</h1>
+          <p style={{ fontSize:13, color:c.textSecondary }}>{projects.length} total · {projects.filter(p=>p.status==='in_progress').length} active</p>
         </div>
-        <Btn variant="primary" onClick={() => setModal({ mode: 'new' })}><Icon name="plus" size={14} color="white" />New Project</Btn>
+        <Btn variant="primary" size={mobile?'sm':'md'} onClick={()=>setModal({mode:'new'})}><Icon name="plus" size={14} color="currentColor"/>New</Btn>
       </div>
 
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 22, gap: 12, flexWrap: 'wrap' }}>
-        <div style={{ display: 'flex', gap: 6 }}>
-          {FILTER_TABS.map(tab => <FilterPill key={tab.id} tab={tab} active={filter === tab.id} onClick={() => setFilter(tab.id)} count={getCount(tab.id)} />)}
+      <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:22, gap:10, flexWrap:'wrap' }}>
+        <div style={{ display:'flex', gap:6, flexWrap:'wrap' }}>
+          {FILTER_TABS.map(tab=><FilterPill key={tab.id} tab={tab} active={filter===tab.id} onClick={()=>setFilter(tab.id)} count={getCount(tab.id)} />)}
         </div>
-        <div style={{ position: 'relative', minWidth: 210 }}>
-          <div style={{ position: 'absolute', left: 10, top: '50%', transform: 'translateY(-50%)', pointerEvents: 'none' }}><Icon name="search" size={13} color={c.textSecondary} /></div>
-          <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Search projects…"
-            onFocus={() => setSearchFoc(true)} onBlur={() => setSearchFoc(false)}
-            style={{ background: c.surface2, border: `1px solid ${searchFoc ? c.accent : c.border}`, borderRadius: 6, padding: '7px 12px 7px 30px', color: c.textPrimary, fontSize: 13, outline: 'none', width: '100%', transition: 'border-color 0.15s', boxShadow: searchFoc ? '0 0 0 3px rgba(99,102,241,0.12)' : 'none', fontFamily: 'Inter, sans-serif' }} />
+        <div style={{ position:'relative', minWidth:mobile?'100%':220 }}>
+          <div style={{ position:'absolute', left:11, top:'50%', transform:'translateY(-50%)', pointerEvents:'none' }}><Icon name="search" size={13} color={c.textSecondary} /></div>
+          <input value={search} onChange={e=>setSearch(e.target.value)} placeholder="Search projects…"
+            onFocus={()=>setSearchFoc(true)} onBlur={()=>setSearchFoc(false)}
+            style={{ backdropFilter:'blur(20px)', WebkitBackdropFilter:'blur(20px)', background:searchFoc?'rgba(255,255,255,0.08)':'rgba(255,255,255,0.05)', border:`1px solid ${searchFoc?'rgba(96,165,250,0.5)':'rgba(255,255,255,0.1)'}`, borderRadius:8, padding:'8px 13px 8px 32px', color:c.textPrimary, fontSize:13, outline:'none', width:'100%', transition:'all 0.15s', boxShadow:searchFoc?'0 0 0 3px rgba(96,165,250,0.1)':'none', fontFamily:'DM Sans,sans-serif' }} />
         </div>
       </div>
 
-      {filtered.length === 0 ? (
-        <EmptyState
-          title={search ? 'No projects match your search' : 'No projects yet'}
-          description={search ? 'Try a different keyword or clear the search.' : 'Create your first project to start managing tasks and tracking progress.'}
-          action={!search ? 'Create first project' : undefined}
-          onAction={() => setModal({ mode: 'new' })}
-        />
-      ) : (
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: 14 }}>
-          {filtered.map(proj => (
-            <ProjectCard key={proj.id} project={{ ...proj, priority: getProjectPriority(proj._id) }}
-              onEdit={() => setModal({ mode: 'edit', project: { ...proj, priority: getProjectPriority(proj._id) } })}
-              onDelete={() => setConfirm(proj._id || proj.id)} />
-          ))}
+      {filtered.length===0
+        ? <EmptyState title={search?'No results':'No projects yet'} description={search?'Try a different keyword.':'Create your first project to start.'} action={!search?'Create first project':undefined} onAction={()=>setModal({mode:'new'})} />
+        : <div style={{ display:'grid', gridTemplateColumns:mobile?'1fr':'repeat(auto-fill,minmax(300px,1fr))', gap:14 }}>
+            {filtered.map((proj,i)=>(
+              <ProjectCard key={proj.id} project={{...proj, priority:getProjectPriority(proj._id)}} idx={i}
+                onEdit={()=>setModal({mode:'edit', project:{...proj, priority:getProjectPriority(proj._id)}})}
+                onDelete={()=>setConfirm(proj._id||proj.id)} />
+            ))}
+          </div>
+      }
+
+      {modal   && <ProjectModal mode={modal.mode} project={modal.project} onSave={handleSave} onClose={()=>setModal(null)} />}
+      {confirm && <ConfirmDialog title="Delete project?" message="This will permanently delete the project and all its tasks. This cannot be undone." onConfirm={()=>handleDelete(confirm)} onCancel={()=>setConfirm(null)} />}
+      {apiErr  && (
+        <div style={{ position:'fixed', bottom:mobile?80:20, right:20, ...GLASS.deep, borderRadius:10, padding:'10px 16px', color:c.danger, fontSize:13, zIndex:500, display:'flex', alignItems:'center', gap:8, maxWidth:300, border:'1px solid rgba(255,107,107,0.3)', animation:'fadeSlideUp 0.2s ease' }}>
+          <Icon name="x" size={13} color={c.danger}/>{apiErr}
+          <button onClick={()=>setApiErr('')} style={{ background:'none', border:'none', cursor:'pointer', color:c.danger, marginLeft:'auto', padding:2, display:'flex' }}><Icon name="x" size={12} color={c.danger}/></button>
         </div>
       )}
-
-      {modal   && <ProjectModal mode={modal.mode} project={modal.project} onSave={handleSave} onClose={() => setModal(null)} />}
-      {confirm && <ConfirmDialog title="Delete project?" message="This will permanently delete the project and all its tasks. This action cannot be undone." onConfirm={() => handleDelete(confirm)} onCancel={() => setConfirm(null)} />}
-      {apiErr  && <div style={{ position: 'fixed', bottom: 20, right: 20, background: 'rgba(239,68,68,0.12)', border: '1px solid rgba(239,68,68,0.3)', borderRadius: 6, padding: '10px 16px', color: C.danger, fontSize: 13, zIndex: 500, display: 'flex', alignItems: 'center', gap: 8 }}><Icon name="x" size={13} color={C.danger} />{apiErr}<button onClick={() => setApiErr('')} style={{ background: 'none', border: 'none', cursor: 'pointer', color: C.danger, marginLeft: 4 }}>✕</button></div>}
     </div>
   );
 }
 
-/* ── PROFILE PAGE ── */
+/* ─────────────────────────────────────────
+   PROFILE PAGE
+───────────────────────────────────────── */
 function ProfilePage({ user, setUser }) {
   const c = useC();
-  const [form, setForm]       = React.useState({ name: user.name, bio: user.bio });
+  const mobile = useMobile();
+  const [form, setForm]       = React.useState({ name:user.name, bio:user.bio });
   const [loading, setLoading] = React.useState(false);
   const [saved, setSaved]     = React.useState(false);
-  const set = (k, v) => { setForm(f => ({ ...f, [k]: v })); setSaved(false); };
+  const set = (k,v)=>{ setForm(f=>({...f,[k]:v})); setSaved(false); };
 
   const handleSave = async () => {
     if (!form.name.trim()) return;
     setLoading(true);
-    await new Promise(r => setTimeout(r, 400));
-    const initials = form.name.trim().split(/\s+/).map(w => w[0].toUpperCase()).slice(0, 2).join('');
-    setUser(u => ({ ...u, name: form.name.trim(), bio: form.bio, initials }));
-    setLoading(false);
-    setSaved(true);
-    setTimeout(() => setSaved(false), 3000);
+    await new Promise(r=>setTimeout(r,400));
+    const initials=form.name.trim().split(/\s+/).map(w=>w[0].toUpperCase()).slice(0,2).join('');
+    setUser(u=>({...u, name:form.name.trim(), bio:form.bio, initials}));
+    setLoading(false); setSaved(true); setTimeout(()=>setSaved(false),3000);
   };
 
   return (
-    <div style={{ padding: 32, maxWidth: 1160, margin: '0 auto' }}>
-      <div style={{ marginBottom: 28 }}>
-        <h1 style={{ fontSize: 24, fontWeight: 500, color: c.textPrimary, letterSpacing: '-0.025em', marginBottom: 4 }}>Profile</h1>
-        <p style={{ fontSize: 13, color: c.textSecondary }}>Manage your account settings and personal information.</p>
+    <div style={{ padding:mobile?'20px 16px 90px':'36px', maxWidth:1160, margin:'0 auto' }}>
+      <div style={{ marginBottom:26 }}>
+        <h1 style={{ fontSize:mobile?20:26, fontWeight:600, color:c.textPrimary, letterSpacing:'-0.025em', marginBottom:5 }}>Profile</h1>
+        <p style={{ fontSize:13, color:c.textSecondary }}>Manage your account settings and personal information.</p>
       </div>
-      <div style={{ maxWidth: 580 }}>
-        <div style={{ background: c.surface, border: `1px solid ${c.border}`, borderRadius: 8, padding: 24, marginBottom: 14 }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 20 }}>
-            <div style={{ width: 72, height: 72, borderRadius: '50%', background: `linear-gradient(135deg, ${c.accent}80, ${c.accent})`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 22, fontWeight: 700, color: 'white', flexShrink: 0, letterSpacing: '0.04em', boxShadow: `0 0 0 4px ${c.accentGlow}` }}>{user.initials}</div>
+      <div style={{ maxWidth:580 }}>
+        <div style={{ ...GLASS.surface, borderRadius:16, padding:24, marginBottom:14, position:'relative', overflow:'hidden' }}>
+          <div style={{ position:'absolute', top:0, left:'8%', right:'8%', height:1, background:'linear-gradient(90deg,transparent,rgba(255,255,255,0.4),transparent)', pointerEvents:'none' }} />
+          <div style={{ display:'flex', alignItems:'center', gap:20, flexWrap:'wrap' }}>
+            <div style={{ width:72, height:72, borderRadius:'50%', background:'conic-gradient(from 135deg,#60A5FA,#A78BFA,#FF6B9D,#60A5FA)', padding:2.5, flexShrink:0 }}>
+              <div style={{ width:'100%', height:'100%', borderRadius:'50%', background:'linear-gradient(135deg,#1a1035,#0d1a30)', display:'flex', alignItems:'center', justifyContent:'center', fontSize:22, fontWeight:700, color:'#F8F8FF', letterSpacing:'0.04em', fontFamily:'Sora,sans-serif' }}>{user.initials}</div>
+            </div>
             <div>
-              <div style={{ fontSize: 18, fontWeight: 500, color: c.textPrimary, letterSpacing: '-0.02em', marginBottom: 4 }}>{user.name}</div>
-              <div style={{ fontSize: 13, color: c.textSecondary, marginBottom: 6, display: 'flex', alignItems: 'center', gap: 5 }}><Icon name="mail" size={12} color={c.textSecondary} />{user.email}</div>
-              <div style={{ fontSize: 12, color: c.textSecondary, display: 'flex', alignItems: 'center', gap: 5 }}><Icon name="clock" size={12} color={c.textSecondary} />Joined {user.joinedAt}</div>
+              <div style={{ fontSize:18, fontWeight:600, color:c.textPrimary, letterSpacing:'-0.02em', marginBottom:4, fontFamily:'Sora,sans-serif' }}>{user.name}</div>
+              <div style={{ fontSize:13, color:c.textSecondary, marginBottom:5, display:'flex', alignItems:'center', gap:6 }}><Icon name="mail" size={12} color={c.textSecondary}/>{user.email}</div>
+              {user.joinedAt&&<div style={{ fontSize:12, color:c.textSecondary, display:'flex', alignItems:'center', gap:6 }}><Icon name="clock" size={12} color={c.textSecondary}/>Joined {user.joinedAt}</div>}
             </div>
           </div>
-          {user.bio && <p style={{ marginTop: 16, paddingTop: 16, borderTop: `1px solid ${c.border}`, fontSize: 13, color: c.textSecondary, lineHeight: 1.65 }}>{user.bio}</p>}
+          {user.bio&&<p style={{ marginTop:16, paddingTop:16, borderTop:'1px solid rgba(255,255,255,0.08)', fontSize:13, color:c.textSecondary, lineHeight:1.72 }}>{user.bio}</p>}
         </div>
 
-        <div style={{ background: c.surface, border: `1px solid ${c.border}`, borderRadius: 8, padding: 24 }}>
-          <h2 style={{ fontSize: 14, fontWeight: 500, color: c.textPrimary, marginBottom: 20, letterSpacing: '-0.01em' }}>Edit Profile</h2>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-            <FormInput label="Full Name" value={form.name} onChange={v => set('name', v)} placeholder="Your full name" />
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-              <label style={{ fontSize: 12, color: c.textSecondary, fontWeight: 500, display: 'flex', alignItems: 'center', gap: 6 }}>
+        <div style={{ ...GLASS.surface, borderRadius:16, padding:24, marginBottom:14, position:'relative', overflow:'hidden' }}>
+          <div style={{ position:'absolute', top:0, left:'8%', right:'8%', height:1, background:'linear-gradient(90deg,transparent,rgba(255,255,255,0.4),transparent)', pointerEvents:'none' }} />
+          <h2 style={{ fontSize:15, fontWeight:600, color:c.textPrimary, marginBottom:20 }}>Edit Profile</h2>
+          <div style={{ display:'flex', flexDirection:'column', gap:16 }}>
+            <FormInput label="Full Name" value={form.name} onChange={v=>set('name',v)} placeholder="Your full name" />
+            <div style={{ display:'flex', flexDirection:'column', gap:6 }}>
+              <label style={{ fontSize:12, color:c.textSecondary, fontWeight:500, display:'flex', alignItems:'center', gap:7 }}>
                 Email address
-                <span style={{ fontSize: 11, color: c.border, background: c.surface2, border: `1px solid ${c.border}`, borderRadius: 4, padding: '1px 6px' }}>read-only</span>
+                <span style={{ fontSize:11, color:'rgba(248,248,255,0.3)', background:'rgba(255,255,255,0.06)', border:'1px solid rgba(255,255,255,0.1)', borderRadius:4, padding:'1px 7px' }}>read-only</span>
               </label>
-              <div style={{ background: c.surface2, border: `1px solid ${c.border}`, borderRadius: 6, padding: '10px 12px', color: c.textSecondary, fontSize: 14, opacity: 0.7, display: 'flex', alignItems: 'center', gap: 8 }}>
-                <Icon name="lock" size={13} color={c.textSecondary} />{user.email}
+              <div style={{ background:'rgba(255,255,255,0.04)', border:'1px solid rgba(255,255,255,0.08)', borderRadius:8, padding:'10px 13px', color:'rgba(248,248,255,0.35)', fontSize:14, display:'flex', alignItems:'center', gap:9 }}>
+                <Icon name="lock" size={13} color="rgba(248,248,255,0.25)"/>{user.email}
               </div>
             </div>
-            <FormTextarea label="Bio" value={form.bio} onChange={v => set('bio', v)} placeholder="Tell your team a bit about yourself…" rows={3} />
+            <FormTextarea label="Bio" value={form.bio} onChange={v=>set('bio',v)} placeholder="Tell your team a bit about yourself…" rows={3} />
           </div>
-          <div style={{ marginTop: 20, display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: 12 }}>
-            {saved && <div style={{ display: 'flex', alignItems: 'center', gap: 6, color: c.success, fontSize: 13, animation: 'fadeIn 0.2s ease' }}><Icon name="check" size={14} color={c.success} />Changes saved</div>}
-            <Btn variant="primary" loading={loading} onClick={handleSave}>{loading ? 'Saving…' : 'Save Changes'}</Btn>
+          <div style={{ marginTop:20, display:'flex', alignItems:'center', justifyContent:'flex-end', gap:12 }}>
+            {saved&&<div style={{ display:'flex', alignItems:'center', gap:6, color:c.success, fontSize:13, animation:'fadeIn 0.2s ease' }}><Icon name="check" size={14} color={c.success}/>Saved</div>}
+            <Btn variant="primary" loading={loading} onClick={handleSave}>{loading?'Saving…':'Save Changes'}</Btn>
           </div>
         </div>
 
-        <div style={{ background: c.surface, border: '1px solid rgba(239,68,68,0.2)', borderRadius: 8, padding: 20, marginTop: 14 }}>
-          <h3 style={{ fontSize: 13, fontWeight: 500, color: c.danger, marginBottom: 6 }}>Danger Zone</h3>
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 16 }}>
-            <p style={{ fontSize: 13, color: c.textSecondary, lineHeight: 1.55 }}>Permanently delete your account and all associated data.</p>
-            <Btn variant="danger" size="sm" style={{ flexShrink: 0 }}>Delete Account</Btn>
+        <div style={{ ...GLASS.surface, border:'1px solid rgba(255,107,107,0.28)', borderRadius:16, padding:22, position:'relative', overflow:'hidden' }}>
+          <div style={{ position:'absolute', top:0, left:'15%', right:'15%', height:1, background:'linear-gradient(90deg,transparent,rgba(255,107,107,0.4),transparent)', pointerEvents:'none' }} />
+          <h3 style={{ fontSize:13, fontWeight:600, color:c.danger, marginBottom:8 }}>Danger Zone</h3>
+          <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', gap:16, flexWrap:'wrap' }}>
+            <p style={{ fontSize:13, color:c.textSecondary, lineHeight:1.6 }}>Permanently delete your account and all associated data.</p>
+            <Btn variant="danger" size="sm" style={{ flexShrink:0 }}>Delete Account</Btn>
           </div>
         </div>
       </div>
@@ -999,7 +1188,9 @@ function ProfilePage({ user, setUser }) {
   );
 }
 
-/* ── APP ROOT ── */
+/* ─────────────────────────────────────────
+   APP ROOT
+───────────────────────────────────────── */
 function App() {
   const [page, setPage]           = React.useState('checking');
   const [projects, setProjects]   = React.useState([]);
@@ -1014,12 +1205,12 @@ function App() {
 
   const loadProjects = () => {
     api('GET', '/projects')
-      .then(data => setProjects((data || []).map(toProjectShape)))
+      .then(data => setProjects((data||[]).map(toProjectShape)))
       .catch(() => {});
   };
 
   const navigate = p => {
-    if (p === 'projects') loadProjects();
+    if (p==='projects') loadProjects();
     setPage(p);
   };
 
@@ -1030,33 +1221,38 @@ function App() {
   };
 
   const onLogout = async () => {
-    try { await api('POST', '/auth/logout'); } catch (_) {}
-    setUser(null);
-    setProjects([]);
-    setPage('landing');
+    try { await api('POST', '/auth/logout'); } catch(_) {}
+    setUser(null); setProjects([]); setPage('landing');
   };
 
-  const appPages = ['dashboard', 'projects', 'profile'];
+  const appPages = ['dashboard','projects','profile'];
 
-  if (page === 'checking') {
+  if (page==='checking') {
     return (
-      <div style={{ height: '100%', background: C.bg, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke={C.accent} strokeWidth="2.5" style={{ animation: 'spin 0.7s linear infinite' }}><path d="M12 3a9 9 0 0 1 9 9"/><path d="M21 12a9 9 0 01-9 9M3 12a9 9 0 019-9" strokeOpacity="0.3"/></svg>
-      </div>
+      <>
+        <GlassBg />
+        <div style={{ position:'relative', zIndex:1, height:'100%', display:'flex', alignItems:'center', justifyContent:'center' }}>
+          <div style={{ display:'flex', flexDirection:'column', alignItems:'center', gap:16 }}>
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#60A5FA" strokeWidth="2.5" style={{animation:'spin 0.8s linear infinite'}}><path d="M12 3a9 9 0 0 1 9 9"/><path d="M21 12a9 9 0 01-9 9M3 12a9 9 0 019-9" strokeOpacity="0.3"/></svg>
+            <span style={{ color:'rgba(248,248,255,0.4)', fontSize:13 }}>Loading…</span>
+          </div>
+        </div>
+      </>
     );
   }
 
   return (
     <ThemeContext.Provider value={C}>
-      <div style={{ height: '100%', background: C.bg }}>
-        {page === 'landing'  && <LandingPage  navigate={navigate} />}
-        {page === 'login'    && <LoginPage    navigate={navigate} onLogin={onLogin} />}
-        {page === 'register' && <RegisterPage navigate={navigate} onLogin={onLogin} />}
+      <GlassBg />
+      <div style={{ position:'relative', zIndex:1, height:'100%' }}>
+        {page==='landing'  && <LandingPage  navigate={navigate} />}
+        {page==='login'    && <LoginPage    navigate={navigate} onLogin={onLogin} />}
+        {page==='register' && <RegisterPage navigate={navigate} onLogin={onLogin} />}
         {appPages.includes(page) && user && (
           <AppLayout page={page} navigate={navigate} user={user} sidebarCollapsed={sidebarCollapsed} setSidebarCollapsed={setSC} onLogout={onLogout}>
-            {page === 'dashboard' && <DashboardPage projects={projects} navigate={navigate} user={user} />}
-            {page === 'projects'  && <ProjectsPage  projects={projects} setProjects={setProjects} />}
-            {page === 'profile'   && <ProfilePage   user={user} setUser={setUser} />}
+            {page==='dashboard' && <DashboardPage projects={projects} navigate={navigate} user={user} />}
+            {page==='projects'  && <ProjectsPage  projects={projects} setProjects={setProjects} />}
+            {page==='profile'   && <ProfilePage   user={user} setUser={setUser} />}
           </AppLayout>
         )}
       </div>
