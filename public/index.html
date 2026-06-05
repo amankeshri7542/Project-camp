@@ -128,6 +128,18 @@ const toProjectShape = p => p ? ({
 }) : null;
 
 /* ─────────────────────────────────────────
+   DEMO SEED DATA (guest mode only)
+───────────────────────────────────────── */
+const DEMO_PROJECTS = [
+  { id:'d1', _id:'d1', name:'E-commerce Redesign', description:'Redesign the checkout and product pages to improve conversion. Target: reduce drop-off by 30%.', status:'in_progress', priority:'high', updatedAt:'Jun 4', tasks:12, completed:7 },
+  { id:'d2', _id:'d2', name:'Mobile App v2.0', description:'Rebuild the iOS/Android apps in React Native with offline support and push notifications.', status:'todo', priority:'high', updatedAt:'Jun 3', tasks:18, completed:0 },
+  { id:'d3', _id:'d3', name:'Auth Service Migration', description:'Move legacy session auth to JWT-based microservice. Includes SSO, refresh tokens, and audit logs.', status:'done', priority:'high', updatedAt:'May 28', tasks:9, completed:9 },
+  { id:'d4', _id:'d4', name:'Design System', description:'Build a shared component library in Storybook. Covers typography, colors, spacing, and all UI atoms.', status:'in_progress', priority:'medium', updatedAt:'Jun 2', tasks:22, completed:14 },
+  { id:'d5', _id:'d5', name:'API Performance', description:'Profile and optimize slow endpoints. Reduce p95 latency from 900ms to under 200ms using caching and indexing.', status:'done', priority:'medium', updatedAt:'May 22', tasks:7, completed:7 },
+  { id:'d6', _id:'d6', name:'Analytics Dashboard', description:'Real-time dashboard with event tracking, funnel analysis, and CSV export. Powered by ClickHouse.', status:'todo', priority:'low', updatedAt:'May 18', tasks:15, completed:4 },
+];
+
+/* ─────────────────────────────────────────
    HOOKS
 ───────────────────────────────────────── */
 const useMobile = () => {
@@ -946,7 +958,7 @@ function StatCard({ icon, label, value, color, idx }) {
   );
 }
 
-function DashboardPage({ projects, navigate, user }) {
+function DashboardPage({ projects, navigate, user, openAuth }) {
   const c = useC();
   const mobile = useMobile();
   const stats = React.useMemo(()=>({ total:projects.length, inProgress:projects.filter(p=>p.status==='in_progress').length, completed:projects.filter(p=>p.status==='done').length, todo:projects.filter(p=>p.status==='todo').length }), [projects]);
@@ -959,6 +971,13 @@ function DashboardPage({ projects, navigate, user }) {
       <div style={{ marginBottom:28 }}>
         <h1 style={{ fontSize:mobile?22:26, fontWeight:600, color:c.textPrimary, letterSpacing:'-0.025em', marginBottom:5 }}>{greeting}, {firstName} 👋</h1>
         <p style={{ fontSize:13, color:c.textSecondary }}>{stats.inProgress} active · {stats.todo} todo · {stats.completed} completed</p>
+        {!user && (
+          <div style={{ marginTop:12, display:'inline-flex', alignItems:'center', gap:8, background:'rgba(255,209,102,0.07)', border:'1px solid rgba(255,209,102,0.22)', borderRadius:8, padding:'6px 13px', fontSize:12, color:'#FFD166' }}>
+            <span style={{ fontWeight:600 }}>DEMO DATA</span>
+            <span style={{ color:'rgba(248,248,255,0.45)' }}>·</span>
+            <button onClick={()=>openAuth&&openAuth('register')} style={{ background:'none', border:'none', cursor:'pointer', color:'#FFD166', fontSize:12, fontFamily:'DM Sans,sans-serif', padding:0, textDecoration:'underline', textUnderlineOffset:2 }}>Sign in to see your real projects</button>
+          </div>
+        )}
       </div>
 
       <div style={{ display:'grid', gridTemplateColumns:mobile?'repeat(2,1fr)':'repeat(4,1fr)', gap:12, marginBottom:18 }}>
@@ -1193,6 +1212,13 @@ function ProjectsPage({ projects, setProjects, openAuth, user }) {
 
   return (
     <div style={{ padding:mobile?'20px 16px 90px':'36px', maxWidth:1160, margin:'0 auto' }}>
+      {!user && (
+        <div style={{ ...GLASS.surface, border:'1px solid rgba(255,209,102,0.25)', borderRadius:12, padding:'12px 18px', marginBottom:20, display:'flex', alignItems:'center', gap:10, flexWrap:'wrap' }}>
+          <span style={{ fontSize:12, background:'rgba(255,209,102,0.1)', color:'#FFD166', border:'1px solid rgba(255,209,102,0.3)', borderRadius:6, padding:'2px 9px', fontWeight:600, flexShrink:0 }}>DEMO</span>
+          <span style={{ fontSize:13, color:'rgba(248,248,255,0.6)', flex:1 }}>You're viewing sample projects. Sign in to create and manage your own.</span>
+          <Btn variant="primary" size="sm" onClick={()=>openAuth&&openAuth('register')}>Get started free</Btn>
+        </div>
+      )}
       <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:24, gap:12 }}>
         <div>
           <h1 style={{ fontSize:mobile?20:26, fontWeight:600, color:c.textPrimary, letterSpacing:'-0.025em', marginBottom:3 }}>My Projects</h1>
@@ -1318,15 +1344,18 @@ function ProfilePage({ user, setUser }) {
 ───────────────────────────────────────── */
 function App() {
   const [page, setPage]           = React.useState('checking');
-  const [projects, setProjects]   = React.useState([]);
+  const [projects, setProjects]   = React.useState(DEMO_PROJECTS);
   const [user, setUser]           = React.useState(null);
   const [sidebarCollapsed, setSC] = React.useState(false);
   const [authModal, setAuthModal] = React.useState(null); // 'login'|'register'|'forgot'|null
+  const [slowWarn, setSlowWarn]   = React.useState(false);
 
   React.useEffect(() => {
+    const t = setTimeout(() => setSlowWarn(true), 5000);
     api('GET', '/auth/current-user')
-      .then(data => { setUser(toUserShape(data)); loadProjects(); setPage('dashboard'); })
-      .catch(() => setPage('landing'));
+      .then(data => { clearTimeout(t); setUser(toUserShape(data)); loadProjects(); setPage('dashboard'); })
+      .catch(() => { clearTimeout(t); setPage('landing'); });
+    return () => clearTimeout(t);
   }, []);
 
   const openAuth  = mode => setAuthModal(mode || 'login');
@@ -1339,7 +1368,6 @@ function App() {
   };
 
   const navigate = p => {
-    // intercept auth routes → open modal instead of full-page route
     if (p === 'login' || p === 'register') { openAuth(p); return; }
     if (p === 'projects' && user) loadProjects();
     setPage(p);
@@ -1347,14 +1375,15 @@ function App() {
 
   const onLogin = userData => {
     setUser(userData);
-    loadProjects();
+    setProjects([]); // clear demo data
+    loadProjects();  // load real projects
     closeAuth();
     setPage('dashboard');
   };
 
   const onLogout = async () => {
     try { await api('POST', '/auth/logout'); } catch(_) {}
-    setUser(null); setProjects([]); setPage('landing');
+    setUser(null); setProjects(DEMO_PROJECTS); setPage('landing');
   };
 
   const appPages = ['dashboard','projects','profile'];
@@ -1364,9 +1393,14 @@ function App() {
       <>
         <GlassBg />
         <div style={{ position:'relative', zIndex:1, height:'100%', display:'flex', alignItems:'center', justifyContent:'center' }}>
-          <div style={{ display:'flex', flexDirection:'column', alignItems:'center', gap:16 }}>
+          <div style={{ display:'flex', flexDirection:'column', alignItems:'center', gap:16, maxWidth:320, textAlign:'center', padding:'0 20px' }}>
             <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#60A5FA" strokeWidth="2.5" style={{animation:'spin 0.8s linear infinite'}}><path d="M12 3a9 9 0 0 1 9 9"/><path d="M21 12a9 9 0 01-9 9M3 12a9 9 0 019-9" strokeOpacity="0.3"/></svg>
             <span style={{ color:'rgba(248,248,255,0.4)', fontSize:13 }}>Loading…</span>
+            {slowWarn && (
+              <p style={{ fontSize:12, color:'rgba(248,248,255,0.3)', lineHeight:1.65, animation:'fadeIn 0.4s ease' }}>
+                Server is waking up — free-tier cold starts take ~30 seconds. Hang tight…
+              </p>
+            )}
           </div>
         </div>
       </>
