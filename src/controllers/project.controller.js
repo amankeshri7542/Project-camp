@@ -49,8 +49,10 @@ const getProjects = asyncHandler(async (req, res) => {
                 _id: "$project._id",
                 name: "$project.name",
                 description: "$project.description",
+                status: "$project.status",
                 members: 1,
                 createdAt: "$project.createdAt",
+                updatedAt: "$project.updatedAt",
                 createdBy: "$project.createdBy",
                 role: 1,
             },
@@ -77,11 +79,12 @@ const getProjectById = asyncHandler(async (req, res) => {
 });
 
 const createProject = asyncHandler(async (req, res) => {
-    const { name, description } = req.body;
+    const { name, description, status } = req.body;
 
     const project = await Project.create({
         name,
         description,
+        status,
         createdBy: new mongoose.Types.ObjectId(req.user._id),
     });
 
@@ -97,12 +100,12 @@ const createProject = asyncHandler(async (req, res) => {
 });
 
 const updateProject = asyncHandler(async (req, res) => {
-    const { name, description } = req.body;
+    const { name, description, status } = req.body;
     const { projectId } = req.params;
 
     const project = await Project.findByIdAndUpdate(
         projectId,
-        { name, description },
+        { name, description, ...(status && { status }) },
         { new: true }
     );
 
