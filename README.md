@@ -2,7 +2,7 @@
 
 A full-stack project management web application built with Node.js, Express, MongoDB, and a glassmorphic React frontend. Manage projects, assign tasks, track progress, and collaborate with your team — all from a single page.
 
-**Live Demo:** _(deploy to Render and add link here)_
+**Live Demo:** https://project-camp-2sp3.onrender.com
 **Repository:** https://github.com/amankeshri7542/Project-camp
 
 ---
