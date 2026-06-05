@@ -931,16 +931,12 @@ function ProfilePage({ user, setUser }) {
   const handleSave = async () => {
     if (!form.name.trim()) return;
     setLoading(true);
-    try {
-      const updated = await api('PATCH', '/auth/update-account', { fullName: form.name.trim() });
-      setUser(toUserShape(updated));
-      setSaved(true);
-      setTimeout(() => setSaved(false), 3000);
-    } catch (e) {
-      // silently ignore or show inline
-    } finally {
-      setLoading(false);
-    }
+    await new Promise(r => setTimeout(r, 400));
+    const initials = form.name.trim().split(/\s+/).map(w => w[0].toUpperCase()).slice(0, 2).join('');
+    setUser(u => ({ ...u, name: form.name.trim(), bio: form.bio, initials }));
+    setLoading(false);
+    setSaved(true);
+    setTimeout(() => setSaved(false), 3000);
   };
 
   return (
