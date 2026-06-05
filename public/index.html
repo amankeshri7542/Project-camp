@@ -453,9 +453,10 @@ function NavItem({ item, isActive, collapsed, onClick }) {
   );
 }
 
-function Sidebar({ page, navigate, user, collapsed, setCollapsed, onLogout }) {
+function Sidebar({ page, navigate, user, collapsed, setCollapsed, onLogout, openAuth }) {
   const c = useC();
   const [hovLogout, setHovLogout] = React.useState(false);
+  const eff = user || { initials:'G', name:'Guest', email:'Browsing as guest' };
   return (
     <aside style={{ width:collapsed?62:224, flexShrink:0, backdropFilter:'blur(64px) saturate(2.2)', WebkitBackdropFilter:'blur(64px) saturate(2.2)', background:'linear-gradient(180deg,rgba(255,255,255,0.13) 0%,rgba(255,255,255,0.06) 100%)', borderRight:'1px solid rgba(255,255,255,0.16)', boxShadow:'4px 0 40px rgba(0,0,0,0.3), inset -1px 0 0 rgba(255,255,255,0.08)', display:'flex', flexDirection:'column', transition:'width 0.3s cubic-bezier(0.34,1.56,0.64,1)', overflow:'hidden', position:'relative', zIndex:10, height:'100%' }}>
       <div style={{ padding:collapsed?'18px 0':'18px 16px', borderBottom:'1px solid rgba(255,255,255,0.08)', display:'flex', alignItems:'center', justifyContent:collapsed?'center':'space-between', minHeight:64 }}>
@@ -471,19 +472,25 @@ function Sidebar({ page, navigate, user, collapsed, setCollapsed, onLogout }) {
       </nav>
       <div style={{ padding:collapsed?'12px 4px':'12px 8px', borderTop:'1px solid rgba(255,255,255,0.08)' }}>
         <div style={{ display:'flex', alignItems:'center', gap:9, padding:collapsed?'6px 0':'6px 4px', justifyContent:collapsed?'center':'flex-start' }}>
-          <div style={{ width:32, height:32, borderRadius:'50%', background:'conic-gradient(from 135deg, #60A5FA, #A78BFA, #FF6B9D, #60A5FA)', padding:1.5, flexShrink:0 }}>
-            <div style={{ width:'100%', height:'100%', borderRadius:'50%', background:'linear-gradient(135deg,#1a1030,#0d1a2e)', display:'flex', alignItems:'center', justifyContent:'center', fontSize:11, fontWeight:700, color:'#F8F8FF', letterSpacing:'0.04em' }}>{user.initials}</div>
+          <div style={{ width:32, height:32, borderRadius:'50%', background: user ? 'conic-gradient(from 135deg, #60A5FA, #A78BFA, #FF6B9D, #60A5FA)' : 'rgba(255,255,255,0.1)', padding:1.5, flexShrink:0 }}>
+            <div style={{ width:'100%', height:'100%', borderRadius:'50%', background:'linear-gradient(135deg,#1a1030,#0d1a2e)', display:'flex', alignItems:'center', justifyContent:'center', fontSize:11, fontWeight:700, color:'#F8F8FF', letterSpacing:'0.04em' }}>{eff.initials}</div>
           </div>
           {!collapsed&&(
             <>
               <div style={{ flex:1, minWidth:0 }}>
-                <div style={{ fontSize:13, fontWeight:500, color:c.textPrimary, overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap' }}>{user.name}</div>
-                <div style={{ fontSize:11, color:c.textSecondary, overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap', marginTop:1 }}>{user.email}</div>
+                <div style={{ fontSize:13, fontWeight:500, color:c.textPrimary, overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap' }}>{eff.name}</div>
+                <div style={{ fontSize:11, color:c.textSecondary, overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap', marginTop:1 }}>{eff.email}</div>
               </div>
-              <button onClick={onLogout} onMouseEnter={()=>setHovLogout(true)} onMouseLeave={()=>setHovLogout(false)} title="Sign out"
-                style={{ background:hovLogout?'rgba(255,107,107,0.12)':'transparent', border:'none', cursor:'pointer', color:hovLogout?c.danger:c.textSecondary, padding:6, borderRadius:6, display:'flex', alignItems:'center', transition:'all 0.15s', flexShrink:0 }}>
-                <Icon name="logout" size={14} color={hovLogout?c.danger:c.textSecondary} />
-              </button>
+              {user
+                ? <button onClick={onLogout} onMouseEnter={()=>setHovLogout(true)} onMouseLeave={()=>setHovLogout(false)} title="Sign out"
+                    style={{ background:hovLogout?'rgba(255,107,107,0.12)':'transparent', border:'none', cursor:'pointer', color:hovLogout?c.danger:c.textSecondary, padding:6, borderRadius:6, display:'flex', alignItems:'center', transition:'all 0.15s', flexShrink:0 }}>
+                    <Icon name="logout" size={14} color={hovLogout?c.danger:c.textSecondary} />
+                  </button>
+                : <button onClick={()=>openAuth&&openAuth('login')} title="Sign in"
+                    style={{ background:'rgba(96,165,250,0.1)', border:'1px solid rgba(96,165,250,0.3)', borderRadius:6, cursor:'pointer', color:c.accent, padding:'4px 8px', fontSize:11, fontWeight:500, fontFamily:'DM Sans,sans-serif', flexShrink:0 }}>
+                    Sign in
+                  </button>
+              }
             </>
           )}
         </div>
@@ -495,8 +502,9 @@ function Sidebar({ page, navigate, user, collapsed, setCollapsed, onLogout }) {
 /* ─────────────────────────────────────────
    MOBILE DRAWER SIDEBAR
 ───────────────────────────────────────── */
-function MobileDrawer({ page, navigate, user, open, onClose, onLogout }) {
+function MobileDrawer({ page, navigate, user, open, onClose, onLogout, openAuth }) {
   const c = useC();
+  const eff = user || { initials:'G', name:'Guest', email:'Browsing as guest' };
   if (!open) return null;
   return (
     <div style={{ position:'fixed', inset:0, zIndex:500 }}>
@@ -519,17 +527,22 @@ function MobileDrawer({ page, navigate, user, open, onClose, onLogout }) {
         </nav>
         <div style={{ padding:'16px 16px', borderTop:'1px solid rgba(255,255,255,0.08)', display:'flex', alignItems:'center', justifyContent:'space-between' }}>
           <div style={{ display:'flex', alignItems:'center', gap:10 }}>
-            <div style={{ width:36, height:36, borderRadius:'50%', background:'conic-gradient(from 135deg,#60A5FA,#A78BFA,#FF6B9D,#60A5FA)', padding:2, flexShrink:0 }}>
-              <div style={{ width:'100%', height:'100%', borderRadius:'50%', background:'linear-gradient(135deg,#1a1030,#0d1a2e)', display:'flex', alignItems:'center', justifyContent:'center', fontSize:12, fontWeight:700, color:'#F8F8FF' }}>{user.initials}</div>
+            <div style={{ width:36, height:36, borderRadius:'50%', background: user ? 'conic-gradient(from 135deg,#60A5FA,#A78BFA,#FF6B9D,#60A5FA)' : 'rgba(255,255,255,0.1)', padding:2, flexShrink:0 }}>
+              <div style={{ width:'100%', height:'100%', borderRadius:'50%', background:'linear-gradient(135deg,#1a1030,#0d1a2e)', display:'flex', alignItems:'center', justifyContent:'center', fontSize:12, fontWeight:700, color:'#F8F8FF' }}>{eff.initials}</div>
             </div>
             <div>
-              <div style={{ fontSize:14, fontWeight:500, color:c.textPrimary }}>{user.name}</div>
-              <div style={{ fontSize:11, color:c.textSecondary }}>{user.email}</div>
+              <div style={{ fontSize:14, fontWeight:500, color:c.textPrimary }}>{eff.name}</div>
+              <div style={{ fontSize:11, color:c.textSecondary }}>{eff.email}</div>
             </div>
           </div>
-          <button onClick={onLogout} style={{ background:'rgba(255,107,107,0.1)', border:'1px solid rgba(255,107,107,0.25)', borderRadius:8, cursor:'pointer', color:c.danger, padding:'8px 10px', display:'flex', alignItems:'center' }}>
-            <Icon name="logout" size={15} color={c.danger} />
-          </button>
+          {user
+            ? <button onClick={onLogout} style={{ background:'rgba(255,107,107,0.1)', border:'1px solid rgba(255,107,107,0.25)', borderRadius:8, cursor:'pointer', color:c.danger, padding:'8px 10px', display:'flex', alignItems:'center' }}>
+                <Icon name="logout" size={15} color={c.danger} />
+              </button>
+            : <button onClick={()=>{openAuth&&openAuth('login');onClose();}} style={{ background:'rgba(96,165,250,0.1)', border:'1px solid rgba(96,165,250,0.3)', borderRadius:8, cursor:'pointer', color:c.accent, padding:'7px 12px', fontSize:13, fontWeight:500, fontFamily:'DM Sans,sans-serif' }}>
+                Sign in
+              </button>
+          }
         </div>
       </aside>
     </div>
@@ -580,20 +593,33 @@ function MobileTopBar({ title, onMenuOpen }) {
 /* ─────────────────────────────────────────
    APP LAYOUT
 ───────────────────────────────────────── */
-function AppLayout({ children, page, navigate, user, sidebarCollapsed, setSidebarCollapsed, onLogout }) {
+function AppLayout({ children, page, navigate, user, sidebarCollapsed, setSidebarCollapsed, onLogout, openAuth }) {
   const mobile = useMobile();
+  const c = useC();
   const [drawerOpen, setDrawerOpen] = React.useState(false);
   return (
     <div style={{ display:'flex', height:'100%', background:'transparent', overflow:'hidden', position:'relative', zIndex:1 }}>
       {!mobile&&(
-        <Sidebar page={page} navigate={navigate} user={user} collapsed={sidebarCollapsed} setCollapsed={setSidebarCollapsed} onLogout={onLogout} />
+        <Sidebar page={page} navigate={navigate} user={user} collapsed={sidebarCollapsed} setCollapsed={setSidebarCollapsed} onLogout={onLogout} openAuth={openAuth} />
       )}
       <div style={{ flex:1, display:'flex', flexDirection:'column', overflow:'hidden', minWidth:0 }}>
         {mobile&&<MobileTopBar title={page} onMenuOpen={()=>setDrawerOpen(true)} />}
+        {!user && (
+          <div style={{ padding:'9px 20px', background:'rgba(96,165,250,0.07)', borderBottom:'1px solid rgba(96,165,250,0.18)', display:'flex', alignItems:'center', justifyContent:'space-between', gap:12, flexWrap:'wrap', flexShrink:0, backdropFilter:'blur(10px)', WebkitBackdropFilter:'blur(10px)' }}>
+            <span style={{ fontSize:13, color:'rgba(248,248,255,0.65)', display:'flex', alignItems:'center', gap:7 }}>
+              <Icon name="lock" size={13} color="rgba(96,165,250,0.7)" />
+              Browsing as guest — sign in to create and manage projects.
+            </span>
+            <div style={{ display:'flex', gap:8, flexShrink:0 }}>
+              <Btn variant="ghost"   size="sm" onClick={()=>openAuth&&openAuth('register')}>Create account</Btn>
+              <Btn variant="primary" size="sm" onClick={()=>openAuth&&openAuth('login')}>Sign in</Btn>
+            </div>
+          </div>
+        )}
         <main style={{ flex:1, overflow:'auto', minWidth:0 }}>{children}</main>
       </div>
       {mobile&&<MobileBottomNav page={page} navigate={navigate} />}
-      {mobile&&<MobileDrawer page={page} navigate={navigate} user={user} open={drawerOpen} onClose={()=>setDrawerOpen(false)} onLogout={onLogout} />}
+      {mobile&&<MobileDrawer page={page} navigate={navigate} user={user} open={drawerOpen} onClose={()=>setDrawerOpen(false)} onLogout={onLogout} openAuth={openAuth} />}
     </div>
   );
 }
@@ -654,6 +680,12 @@ function LandingPage({ navigate }) {
           <Btn variant="primary" size="lg" onClick={()=>navigate('register')}>Get Started free <Icon name="arrowUR" size={15} color="currentColor" /></Btn>
           <Btn variant="ghost"   size="lg" onClick={()=>navigate('login')}>Sign in</Btn>
         </div>
+        <div style={{ marginTop:18, animation:'fadeSlideUp 0.5s ease 0.35s both' }}>
+          <button onClick={()=>navigate('dashboard')} style={{ background:'none', border:'none', cursor:'pointer', color:'rgba(248,248,255,0.4)', fontSize:13, fontFamily:'DM Sans,sans-serif', display:'inline-flex', alignItems:'center', gap:5, transition:'color 0.15s', padding:0 }}
+            onMouseEnter={e=>e.currentTarget.style.color='rgba(248,248,255,0.7)'} onMouseLeave={e=>e.currentTarget.style.color='rgba(248,248,255,0.4)'}>
+            Browse as guest <Icon name="arrowUR" size={12} color="currentColor" />
+          </button>
+        </div>
         <div style={{ marginTop:56, display:'flex', alignItems:'center', gap:14, color:c.textSecondary, fontSize:13, animation:'fadeSlideUp 0.5s ease 0.4s both', flexWrap:'wrap', justifyContent:'center' }}>
           <div style={{ display:'flex' }}>
             {AVATARS.map((av,i)=>(
@@ -698,7 +730,7 @@ function ErrorAlert({ msg }) {
   );
 }
 
-function LoginPage({ navigate, onLogin }) {
+function LoginPage({ navigate, onLogin, onClose, setMode }) {
   const c = useC();
   const [email, setEmail]       = React.useState('');
   const [password, setPassword] = React.useState('');
@@ -720,6 +752,13 @@ function LoginPage({ navigate, onLogin }) {
     <AuthLayout>
       <div style={{ ...GLASS.deep, borderRadius:20, padding:'clamp(24px,4vw,36px)', position:'relative', overflow:'hidden' }}>
         <div style={{ position:'absolute', top:0, left:'10%', right:'10%', height:1, background:'linear-gradient(90deg,transparent,rgba(255,255,255,0.6),transparent)', pointerEvents:'none', zIndex:2 }} />
+        {onClose && (
+          <button onClick={onClose} title="Close"
+            style={{ position:'absolute', top:14, right:14, zIndex:10, background:'rgba(255,255,255,0.07)', border:'1px solid rgba(255,255,255,0.14)', borderRadius:'50%', width:30, height:30, display:'flex', alignItems:'center', justifyContent:'center', cursor:'pointer', transition:'all 0.15s' }}
+            onMouseEnter={e=>{e.currentTarget.style.background='rgba(255,255,255,0.14)';}} onMouseLeave={e=>{e.currentTarget.style.background='rgba(255,255,255,0.07)';}}>
+            <Icon name="x" size={14} color={c.textSecondary} />
+          </button>
+        )}
         <div style={{ textAlign:'center', marginBottom:28 }}>
           <div style={{ display:'flex', justifyContent:'center', marginBottom:20 }}><Logo size="md" /></div>
           <h1 style={{ fontSize:22, fontWeight:600, color:c.textPrimary, letterSpacing:'-0.02em', marginBottom:7 }}>Welcome back</h1>
@@ -727,11 +766,11 @@ function LoginPage({ navigate, onLogin }) {
         </div>
         <ErrorAlert msg={error} />
         <div style={{ display:'flex', flexDirection:'column', gap:14 }}>
-          <FormInput label="Email" type="email" value={email} onChange={setEmail} placeholder="you@company.com" />
+          <FormInput label="Email" type="email" value={email} onChange={setEmail} placeholder="you@company.com" autoFocus />
           <div>
             <FormInput label="Password" type="password" value={password} onChange={setPassword} placeholder="••••••••" onKeyDown={e=>e.key==='Enter'&&submit()} />
             <div style={{ display:'flex', justifyContent:'flex-end', marginTop:7 }}>
-              <button style={{ background:'none', border:'none', cursor:'pointer', color:c.accent, fontSize:12, padding:0, fontFamily:'DM Sans,sans-serif' }}>Forgot password?</button>
+              <button onClick={()=>setMode?setMode('forgot'):null} style={{ background:'none', border:'none', cursor:'pointer', color:c.accent, fontSize:12, padding:0, fontFamily:'DM Sans,sans-serif' }}>Forgot password?</button>
             </div>
           </div>
           <Btn variant="primary" fullWidth loading={loading} onClick={submit} style={{ marginTop:4, justifyContent:'center' }}>
@@ -741,7 +780,7 @@ function LoginPage({ navigate, onLogin }) {
         <div style={{ marginTop:24, paddingTop:20, borderTop:'1px solid rgba(255,255,255,0.08)', textAlign:'center' }}>
           <p style={{ fontSize:13, color:c.textSecondary }}>
             Don't have an account?{' '}
-            <button onClick={()=>navigate('register')} style={{ background:'none', border:'none', cursor:'pointer', color:c.accent, fontSize:13, fontWeight:500, padding:0, fontFamily:'DM Sans,sans-serif' }}>Create one</button>
+            <button onClick={()=>setMode?setMode('register'):navigate('register')} style={{ background:'none', border:'none', cursor:'pointer', color:c.accent, fontSize:13, fontWeight:500, padding:0, fontFamily:'DM Sans,sans-serif' }}>Create one</button>
           </p>
         </div>
       </div>
@@ -749,7 +788,7 @@ function LoginPage({ navigate, onLogin }) {
   );
 }
 
-function RegisterPage({ navigate, onLogin }) {
+function RegisterPage({ navigate, onLogin, onClose, setMode }) {
   const c = useC();
   const [form, setForm]       = React.useState({ name:'', username:'', email:'', password:'' });
   const [loading, setLoading] = React.useState(false);
@@ -773,6 +812,13 @@ function RegisterPage({ navigate, onLogin }) {
     <AuthLayout>
       <div style={{ ...GLASS.deep, borderRadius:20, padding:'clamp(24px,4vw,36px)', position:'relative', overflow:'hidden' }}>
         <div style={{ position:'absolute', top:0, left:'10%', right:'10%', height:1, background:'linear-gradient(90deg,transparent,rgba(255,255,255,0.6),transparent)', pointerEvents:'none', zIndex:2 }} />
+        {onClose && (
+          <button onClick={onClose} title="Close"
+            style={{ position:'absolute', top:14, right:14, zIndex:10, background:'rgba(255,255,255,0.07)', border:'1px solid rgba(255,255,255,0.14)', borderRadius:'50%', width:30, height:30, display:'flex', alignItems:'center', justifyContent:'center', cursor:'pointer', transition:'all 0.15s' }}
+            onMouseEnter={e=>{e.currentTarget.style.background='rgba(255,255,255,0.14)';}} onMouseLeave={e=>{e.currentTarget.style.background='rgba(255,255,255,0.07)';}}>
+            <Icon name="x" size={14} color={c.textSecondary} />
+          </button>
+        )}
         <div style={{ textAlign:'center', marginBottom:28 }}>
           <div style={{ display:'flex', justifyContent:'center', marginBottom:20 }}><Logo size="md" /></div>
           <h1 style={{ fontSize:22, fontWeight:600, color:c.textPrimary, letterSpacing:'-0.02em', marginBottom:7 }}>Create your account</h1>
@@ -780,7 +826,7 @@ function RegisterPage({ navigate, onLogin }) {
         </div>
         <ErrorAlert msg={error} />
         <div style={{ display:'flex', flexDirection:'column', gap:14 }}>
-          <FormInput label="Full name"    value={form.name}     onChange={v=>set('name',v)}     placeholder="Alex Morgan" />
+          <FormInput label="Full name"    value={form.name}     onChange={v=>set('name',v)}     placeholder="Alex Morgan" autoFocus />
           <FormInput label="Username"     value={form.username} onChange={v=>set('username',v)} placeholder="alexmorgan" />
           <FormInput label="Email"        type="email" value={form.email}    onChange={v=>set('email',v)}    placeholder="you@company.com" />
           <FormInput label="Password"     type="password" value={form.password} onChange={v=>set('password',v)} placeholder="At least 8 characters" onKeyDown={e=>e.key==='Enter'&&submit()} />
@@ -795,11 +841,95 @@ function RegisterPage({ navigate, onLogin }) {
         <div style={{ marginTop:24, paddingTop:20, borderTop:'1px solid rgba(255,255,255,0.08)', textAlign:'center' }}>
           <p style={{ fontSize:13, color:c.textSecondary }}>
             Already have an account?{' '}
-            <button onClick={()=>navigate('login')} style={{ background:'none', border:'none', cursor:'pointer', color:c.accent, fontSize:13, fontWeight:500, padding:0, fontFamily:'DM Sans,sans-serif' }}>Sign in</button>
+            <button onClick={()=>setMode?setMode('login'):navigate('login')} style={{ background:'none', border:'none', cursor:'pointer', color:c.accent, fontSize:13, fontWeight:500, padding:0, fontFamily:'DM Sans,sans-serif' }}>Sign in</button>
           </p>
         </div>
       </div>
     </AuthLayout>
+  );
+}
+
+/* ─────────────────────────────────────────
+   FORGOT PASSWORD FORM
+───────────────────────────────────────── */
+function ForgotPasswordForm({ onClose, setMode }) {
+  const c = useC();
+  const [email, setEmail]     = React.useState('');
+  const [loading, setLoading] = React.useState(false);
+  const [sent, setSent]       = React.useState(false);
+  const [error, setError]     = React.useState('');
+
+  const submit = async () => {
+    if (!email) { setError('Please enter your email address.'); return; }
+    setError(''); setLoading(true);
+    try {
+      await api('POST', '/auth/forgot-password', { email });
+      setSent(true);
+    } catch(e) {
+      setError(e.message || 'Could not send reset email. Check the address and try again.');
+    } finally { setLoading(false); }
+  };
+
+  return (
+    <AuthLayout>
+      <div style={{ ...GLASS.deep, borderRadius:20, padding:'clamp(24px,4vw,36px)', position:'relative', overflow:'hidden' }}>
+        <div style={{ position:'absolute', top:0, left:'10%', right:'10%', height:1, background:'linear-gradient(90deg,transparent,rgba(255,255,255,0.6),transparent)', pointerEvents:'none', zIndex:2 }} />
+        {onClose && (
+          <button onClick={onClose} title="Close"
+            style={{ position:'absolute', top:14, right:14, zIndex:10, background:'rgba(255,255,255,0.07)', border:'1px solid rgba(255,255,255,0.14)', borderRadius:'50%', width:30, height:30, display:'flex', alignItems:'center', justifyContent:'center', cursor:'pointer', transition:'all 0.15s' }}
+            onMouseEnter={e=>{e.currentTarget.style.background='rgba(255,255,255,0.14)';}} onMouseLeave={e=>{e.currentTarget.style.background='rgba(255,255,255,0.07)';}}>
+            <Icon name="x" size={14} color={c.textSecondary} />
+          </button>
+        )}
+        <div style={{ textAlign:'center', marginBottom:28 }}>
+          <div style={{ display:'flex', justifyContent:'center', marginBottom:20 }}>
+            <div style={{ width:52, height:52, borderRadius:14, background:'rgba(96,165,250,0.1)', border:'1px solid rgba(96,165,250,0.25)', display:'flex', alignItems:'center', justifyContent:'center' }}>
+              <Icon name="lock" size={22} color={c.accent} />
+            </div>
+          </div>
+          <h1 style={{ fontSize:22, fontWeight:600, color:c.textPrimary, letterSpacing:'-0.02em', marginBottom:7 }}>Reset your password</h1>
+          <p style={{ fontSize:13, color:c.textSecondary, lineHeight:1.65 }}>Enter your email and we'll send a reset link.</p>
+        </div>
+        {sent ? (
+          <div style={{ background:'rgba(168,255,120,0.07)', border:'1px solid rgba(168,255,120,0.25)', borderRadius:10, padding:'16px 18px', textAlign:'center' }}>
+            <Icon name="check" size={20} color={c.success} />
+            <p style={{ fontSize:14, color:c.success, fontWeight:500, marginTop:10, marginBottom:6 }}>Reset link sent!</p>
+            <p style={{ fontSize:13, color:c.textSecondary, lineHeight:1.65 }}>Check your inbox at <strong style={{ color:c.textPrimary }}>{email}</strong>. The link expires in 20 minutes.</p>
+            <p style={{ fontSize:12, color:c.textSecondary, marginTop:10 }}>No email? Check your spam folder or try again.</p>
+          </div>
+        ) : (
+          <>
+            <ErrorAlert msg={error} />
+            <div style={{ display:'flex', flexDirection:'column', gap:14 }}>
+              <FormInput label="Email address" type="email" value={email} onChange={setEmail} placeholder="you@company.com" autoFocus onKeyDown={e=>e.key==='Enter'&&submit()} />
+              <Btn variant="primary" fullWidth loading={loading} onClick={submit} style={{ justifyContent:'center' }}>
+                {loading ? 'Sending…' : 'Send reset link'}
+              </Btn>
+            </div>
+          </>
+        )}
+        <div style={{ marginTop:24, paddingTop:20, borderTop:'1px solid rgba(255,255,255,0.08)', textAlign:'center' }}>
+          <button onClick={()=>setMode?setMode('login'):onClose&&onClose()} style={{ background:'none', border:'none', cursor:'pointer', color:c.accent, fontSize:13, fontWeight:500, padding:0, fontFamily:'DM Sans,sans-serif', display:'inline-flex', alignItems:'center', gap:5 }}>
+            <Icon name="chevL" size={13} color={c.accent} /> Back to sign in
+          </button>
+        </div>
+      </div>
+    </AuthLayout>
+  );
+}
+
+/* ─────────────────────────────────────────
+   AUTH MODAL OVERLAY
+───────────────────────────────────────── */
+function AuthModal({ mode, setMode, onLogin, onClose }) {
+  return (
+    <div style={{ position:'fixed', inset:0, background:'rgba(0,0,0,0.65)', backdropFilter:'blur(14px)', WebkitBackdropFilter:'blur(14px)', display:'flex', alignItems:'center', justifyContent:'center', zIndex:600, animation:'fadeIn 0.18s ease', padding:'20px 16px', overflowY:'auto' }}>
+      <div style={{ width:'100%', maxWidth:420, animation:'fadeSlideUp 0.25s ease' }}>
+        {mode==='login'    && <LoginPage    navigate={()=>{}} onLogin={onLogin} onClose={onClose} setMode={setMode} />}
+        {mode==='register' && <RegisterPage navigate={()=>{}} onLogin={onLogin} onClose={onClose} setMode={setMode} />}
+        {mode==='forgot'   && <ForgotPasswordForm onClose={onClose} setMode={setMode} />}
+      </div>
+    </div>
   );
 }
 
@@ -1020,7 +1150,7 @@ function ProjectModal({ mode, project, onSave, onClose }) {
   );
 }
 
-function ProjectsPage({ projects, setProjects }) {
+function ProjectsPage({ projects, setProjects, openAuth, user }) {
   const c = useC();
   const mobile = useMobile();
   const [filter, setFilter]       = React.useState('all');
@@ -1073,7 +1203,7 @@ function ProjectsPage({ projects, setProjects }) {
           <h1 style={{ fontSize:mobile?20:26, fontWeight:600, color:c.textPrimary, letterSpacing:'-0.025em', marginBottom:3 }}>My Projects</h1>
           <p style={{ fontSize:13, color:c.textSecondary }}>{projects.length} total · {projects.filter(p=>p.status==='in_progress').length} active</p>
         </div>
-        <Btn variant="primary" size={mobile?'sm':'md'} onClick={()=>setModal({mode:'new'})}><Icon name="plus" size={14} color="currentColor"/>New</Btn>
+        <Btn variant="primary" size={mobile?'sm':'md'} onClick={()=>user?setModal({mode:'new'}):openAuth&&openAuth('login')}><Icon name="plus" size={14} color="currentColor"/>New</Btn>
       </div>
 
       <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:22, gap:10, flexWrap:'wrap' }}>
@@ -1089,7 +1219,7 @@ function ProjectsPage({ projects, setProjects }) {
       </div>
 
       {filtered.length===0
-        ? <EmptyState title={search?'No results':'No projects yet'} description={search?'Try a different keyword.':'Create your first project to start.'} action={!search?'Create first project':undefined} onAction={()=>setModal({mode:'new'})} />
+        ? <EmptyState title={search?'No results':'No projects yet'} description={search?'Try a different keyword.':(user?'Create your first project to start.':'Sign in to create and manage projects.')} action={!search?(user?'Create first project':'Sign in to continue'):undefined} onAction={()=>user?setModal({mode:'new'}):openAuth&&openAuth('login')} />
         : <div style={{ display:'grid', gridTemplateColumns:mobile?'1fr':'repeat(auto-fill,minmax(300px,1fr))', gap:14 }}>
             {filtered.map((proj,i)=>(
               <ProjectCard key={proj.id} project={{...proj, priority:getProjectPriority(proj._id)}} idx={i}
@@ -1196,12 +1326,16 @@ function App() {
   const [projects, setProjects]   = React.useState([]);
   const [user, setUser]           = React.useState(null);
   const [sidebarCollapsed, setSC] = React.useState(false);
+  const [authModal, setAuthModal] = React.useState(null); // 'login'|'register'|'forgot'|null
 
   React.useEffect(() => {
     api('GET', '/auth/current-user')
       .then(data => { setUser(toUserShape(data)); loadProjects(); setPage('dashboard'); })
       .catch(() => setPage('landing'));
   }, []);
+
+  const openAuth  = mode => setAuthModal(mode || 'login');
+  const closeAuth = () => setAuthModal(null);
 
   const loadProjects = () => {
     api('GET', '/projects')
@@ -1210,13 +1344,16 @@ function App() {
   };
 
   const navigate = p => {
-    if (p==='projects') loadProjects();
+    // intercept auth routes → open modal instead of full-page route
+    if (p === 'login' || p === 'register') { openAuth(p); return; }
+    if (p === 'projects' && user) loadProjects();
     setPage(p);
   };
 
   const onLogin = userData => {
     setUser(userData);
     loadProjects();
+    closeAuth();
     setPage('dashboard');
   };
 
@@ -1245,16 +1382,20 @@ function App() {
     <ThemeContext.Provider value={C}>
       <GlassBg />
       <div style={{ position:'relative', zIndex:1, height:'100%' }}>
-        {page==='landing'  && <LandingPage  navigate={navigate} />}
-        {page==='login'    && <LoginPage    navigate={navigate} onLogin={onLogin} />}
-        {page==='register' && <RegisterPage navigate={navigate} onLogin={onLogin} />}
-        {appPages.includes(page) && user && (
-          <AppLayout page={page} navigate={navigate} user={user} sidebarCollapsed={sidebarCollapsed} setSidebarCollapsed={setSC} onLogout={onLogout}>
-            {page==='dashboard' && <DashboardPage projects={projects} navigate={navigate} user={user} />}
-            {page==='projects'  && <ProjectsPage  projects={projects} setProjects={setProjects} />}
-            {page==='profile'   && <ProfilePage   user={user} setUser={setUser} />}
+        {page==='landing' && <LandingPage navigate={navigate} openAuth={openAuth} />}
+        {appPages.includes(page) && (
+          <AppLayout page={page} navigate={navigate} user={user} sidebarCollapsed={sidebarCollapsed} setSidebarCollapsed={setSC} onLogout={onLogout} openAuth={openAuth}>
+            {page==='dashboard' && <DashboardPage projects={projects} navigate={navigate} user={user} openAuth={openAuth} />}
+            {page==='projects'  && <ProjectsPage  projects={projects} setProjects={setProjects} user={user} openAuth={openAuth} />}
+            {page==='profile'   && (user ? <ProfilePage user={user} setUser={setUser} /> : (
+              <div style={{ padding:40, textAlign:'center', color:'rgba(248,248,255,0.5)', fontSize:14 }}>
+                <p style={{ marginBottom:16 }}>Sign in to view your profile.</p>
+                <Btn variant="primary" onClick={()=>openAuth('login')}>Sign in</Btn>
+              </div>
+            ))}
           </AppLayout>
         )}
+        {authModal && <AuthModal mode={authModal} setMode={setAuthModal} onLogin={onLogin} onClose={closeAuth} />}
       </div>
     </ThemeContext.Provider>
   );
