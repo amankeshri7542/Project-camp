@@ -9,15 +9,13 @@ A full-stack project management web application built with Node.js, Express, Mon
 
 ## Screenshots
 
-> After deploying, replace these with actual screenshots or a Loom/YouTube demo link.
+**Dashboard** — glassmorphic stats overview with project table and live status badges:
 
-| Login / Register | Dashboard | Projects |
-|---|---|---|
-| _(screenshot)_ | _(screenshot)_ | _(screenshot)_ |
+![Dashboard](public/images/SCR-20260606-cbbe.jpeg)
 
-**To record a quick demo:**
-- Mac: `Cmd + Shift + 5` → screen record
-- Free screen-to-GIF: [screentogif.com](https://www.screentogif.com) or [Loom](https://loom.com)
+**Profile** — user profile management with edit form and account settings:
+
+![Profile](public/images/SCR-20260606-cbng.jpeg)
 
 ---
 
