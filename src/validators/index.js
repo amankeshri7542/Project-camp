@@ -61,6 +61,34 @@ export const addMemberToProjectValidator = () => {
     ];
 };
 
+export const createTaskValidator = () => {
+    return [
+        body('title')
+            .notEmpty().withMessage('Title is required'),
+
+        body('description')
+            .optional(),
+
+        body('status')
+            .optional()
+            .isIn(['todo', 'in_progress', 'done']).withMessage('Status must be todo, in_progress, or done'),
+    ];
+};
+
+export const createSubTaskValidator = () => {
+    return [
+        body('title')
+            .notEmpty().withMessage('Title is required'),
+    ];
+};
+
+export const createNoteValidator = () => {
+    return [
+        body('content')
+            .notEmpty().withMessage('Content is required'),
+    ];
+};
+
 export const userRegisterValidator = () => {
     return [
         body('email')
